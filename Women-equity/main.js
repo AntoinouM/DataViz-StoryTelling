@@ -2,7 +2,7 @@ import './style.css';
 import * as d3 from 'd3';
 
 // import helping function from utils
-import { transformData, cleanItems } from './src/util.js';
+import { transformData } from './src/util.js';
 
 /**
  * Setting up const & variables
@@ -26,11 +26,30 @@ async function drawChart() {
   // Load world data
   const worldData = await d3.json('./data/world.geo.json');
 
-  const wblData = await d3.dsv(";", "./data/WBL-panel.csv");
-  
+  const wblData = await d3.dsv(";", "./data/WBL-panel.csv", (rows) => {
+    return {
+        scoring: {    
+            economy: rows['Economy'],
+            iso_code: rows['ISO_Code'],
+            region: rows['Region'],
+            income_group: rows['Income_Group'],
+            report_year: rows['Report_Year'],
+            wbl_index: rows['WBL_INDEX'],
+            indicators: {
+                mobility : rows['MOBILITY'],
+                workplace: rows['WORKPLACE'],
+                pay: rows['PAY'],
+                marriage: rows['MARRIAGE'],
+                parenthood: rows['PARENTHOOD'],
+                entrepreneurship: rows['ENTREPRENEURSHIP'],
+                assets: rows['ASSETS'],
+                pension: rows['PENSION'],
+            }
+        }
+    }
+  })
   const mergedData = transformData(wblData, worldData, currentYear);
-  console.log(mergedData)
-
+  console.log(mergedData[2])
   // Define accessor functions
   //const yAccessor = d => d.item 
   //const xAccessor = d => 
