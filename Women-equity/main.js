@@ -49,6 +49,7 @@ async function drawChart() {
     }
   })
   const mergedData = transformData(wblData, worldData, currentYear);
+  console.log(mergedData)
   // Define accessor functions
   //const yAccessor = d => d.item 
   //const xAccessor = d => 
@@ -56,7 +57,7 @@ async function drawChart() {
   /* [2] ===== CHART DIMENSION ===== */
   const dimensions = {
       width: window.innerWidth * 0.75,
-      height: 500,
+      height: window.innerHeight * 0.65,
       margin: {top: 20, right: 20, bottom: 35, left: 35},
       boundedWidth: undefined,
       boundedHeight: undefined,
