@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import * as d3 from 'd3';
 
 /**
  * The function will grab the current year data from both sets and merges them

@@ -49,7 +49,6 @@ async function drawChart() {
     }
   })
   const mergedData = transformData(wblData, worldData, currentYear);
-  console.log(mergedData[2])
   // Define accessor functions
   //const yAccessor = d => d.item 
   //const xAccessor = d => 
@@ -67,6 +66,7 @@ async function drawChart() {
   dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
   /* [3] ===== DRAW CANVAS ===== */
   const wrapper = d3.select('#viz')
+  
   const svg = d3.select('#viz')
       .append('svg')
           .attr('width', dimensions.width)
