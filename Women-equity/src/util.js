@@ -32,7 +32,6 @@ export const transformData = (wblData, worldData, demographicData, year) => { //
             }
         }
     })
-    console.log(wblData)
     
     const filteredData = mappedWBL.filter( (e) => +e.scoring.report_year === year);
 
