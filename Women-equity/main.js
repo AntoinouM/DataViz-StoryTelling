@@ -26,6 +26,8 @@ async function drawChart() {
   // Load world data
   const worldData = await d3.json('./data/world.geo.json');
 
+  const demographicsData = await d3.csv('./data/SP.POP.TOTL.FE.csv')
+
   const wblData = await d3.dsv(";", "./data/WBL-panel.csv", (rows) => {
     return {
         scoring: {    
@@ -48,8 +50,10 @@ async function drawChart() {
         }
     }
   })
-  const mergedData = transformData(wblData, worldData, currentYear);
-  console.log(mergedData)
+
+
+  const mergedData = transformData(wblData, worldData, demographicsData, currentYear);
+  console.log(mergedData[0])
   // Define accessor functions
   //const yAccessor = d => d.item 
   //const xAccessor = d => 

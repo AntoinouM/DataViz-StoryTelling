@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { lte } from 'lodash';
 
 /**
  * The function will grab the current year data from both sets and merges them
@@ -8,12 +8,20 @@ import _ from 'lodash';
  * @param {*} currentYear 
  */
 
-export const transformData = (wblData, worldData, year) => { // we use liodash to simplify the code {vanilla: filter both array then merge}, lodash work with sequence like d3 works with select
+export const transformData = (wblData, worldData, demographicData, year) => { // we use liodash to simplify the code {vanilla: filter both array then merge}, lodash work with sequence like d3 works with select
     const filteredData = wblData.filter( (e) => +e.scoring.report_year === year);
 
+    const filteredDemographics = demographicData.map(d => {
+        return {
+            country_code: d['Country_Code'],
+            women_population: d[`${year}`]
+        }
+    })
+
     const mergedData = _(filteredData)                              // start sequence (start with this array)
-        .keyBy('scoring.iso_code')                                              // Create a dictionary (TKey, TValue) of the first array
+        .keyBy('scoring.iso_code')                                  // Create a dictionary (TKey, TValue) of the first array
         .merge(_.keyBy(worldData.features, 'properties.iso_a3'))    // Create a dictionary of the second array and merge it to the first one
+        .merge(_.keyBy(filteredDemographics, 'country_code'))   
         .values()                                                   // convert the combined dictionaries to an array again
         .value()                                                    // get the value (array) of the sequence that is returned by lodash
 
