@@ -9,7 +9,32 @@ import _, { lte } from 'lodash';
  */
 
 export const transformData = (wblData, worldData, demographicData, year) => { // we use liodash to simplify the code {vanilla: filter both array then merge}, lodash work with sequence like d3 works with select
-    const filteredData = wblData.filter( (e) => +e.scoring.report_year === year);
+    
+    const mappedWBL = wblData.map( (rows) => {
+        return {
+            scoring: {    
+                economy: rows['Economy'],
+                iso_code: rows['ISO_Code'],
+                region: rows['Region'],
+                income_group: rows['Income_Group'],
+                report_year: rows['Report_Year'],
+                wbl_index: rows['WBL_INDEX'],
+                indicators: {
+                    mobility : rows['MOBILITY'],
+                    workplace: rows['WORKPLACE'],
+                    pay: rows['PAY'],
+                    marriage: rows['MARRIAGE'],
+                    parenthood: rows['PARENTHOOD'],
+                    entrepreneurship: rows['ENTREPRENEURSHIP'],
+                    assets: rows['ASSETS'],
+                    pension: rows['PENSION'],
+                }
+            }
+        }
+    })
+    console.log(wblData)
+    
+    const filteredData = mappedWBL.filter( (e) => +e.scoring.report_year === year);
 
     const filteredDemographics = demographicData.map(d => {
         return {

@@ -2,7 +2,9 @@ import './style.css';
 import * as d3 from 'd3';
 
 // import helping function from utils
-import { transformData } from './src/util.js';
+import {
+    transformData
+} from './src/util.js';
 
 /**
  * Setting up const & variables
@@ -22,63 +24,44 @@ let currentYear = 2000;
 // easier to work with asynch / await
 async function drawChart() {
 
-  /* [1] ===== ACCESS DATA ===== */
-  // Load world data
-  const worldData = await d3.json('./data/world.geo.json');
+    /* [1] ===== ACCESS DATA ===== */
+    // Load world data
+    const worldData = await d3.json('./data/world.geo.json');
+    const demographicsData = await d3.csv('./data/SP.POP.TOTL.FE.csv')
+    const wblData = await d3.dsv(";", "./data/WBL-panel.csv")
 
-  const demographicsData = await d3.csv('./data/SP.POP.TOTL.FE.csv')
+    const mergedData = transformData(wblData, worldData, demographicsData, currentYear);
 
-  const wblData = await d3.dsv(";", "./data/WBL-panel.csv", (rows) => {
-    return {
-        scoring: {    
-            economy: rows['Economy'],
-            iso_code: rows['ISO_Code'],
-            region: rows['Region'],
-            income_group: rows['Income_Group'],
-            report_year: rows['Report_Year'],
-            wbl_index: rows['WBL_INDEX'],
-            indicators: {
-                mobility : rows['MOBILITY'],
-                workplace: rows['WORKPLACE'],
-                pay: rows['PAY'],
-                marriage: rows['MARRIAGE'],
-                parenthood: rows['PARENTHOOD'],
-                entrepreneurship: rows['ENTREPRENEURSHIP'],
-                assets: rows['ASSETS'],
-                pension: rows['PENSION'],
-            }
-        }
+    // Define accessor functions
+    //const yAccessor = d => d.item 
+    //const xAccessor = d => 
+
+    /* [2] ===== CHART DIMENSION ===== */
+    const dimensions = {
+        width: window.innerWidth * 0.75,
+        height: window.innerHeight * 0.65,
+        margin: {
+            top: 20,
+            right: 20,
+            bottom: 35,
+            left: 35
+        },
+        boundedWidth: undefined,
+        boundedHeight: undefined,
     }
-  })
 
+    dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right;
+    dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
+    /* [3] ===== DRAW CANVAS ===== */
+    const wrapper = d3.select('#viz')
 
-  const mergedData = transformData(wblData, worldData, demographicsData, currentYear);
-  console.log(mergedData[0])
-  // Define accessor functions
-  //const yAccessor = d => d.item 
-  //const xAccessor = d => 
-
-  /* [2] ===== CHART DIMENSION ===== */
-  const dimensions = {
-      width: window.innerWidth * 0.75,
-      height: window.innerHeight * 0.65,
-      margin: {top: 20, right: 20, bottom: 35, left: 35},
-      boundedWidth: undefined,
-      boundedHeight: undefined,
-  }
-
-  dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right;
-  dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
-  /* [3] ===== DRAW CANVAS ===== */
-  const wrapper = d3.select('#viz')
-  
-  const svg = d3.select('#viz')
-      .append('svg')
-          .attr('width', dimensions.width)
-          .attr('height', dimensions.height);
-          const viz = svg.append('g')
-          .attr('class', 'line-chart')
-          .attr('transform', `translate(${dimensions.margin.left}, ${dimensions.margin.top})`)
+    const svg = d3.select('#viz')
+        .append('svg')
+        .attr('width', dimensions.width)
+        .attr('height', dimensions.height);
+    const viz = svg.append('g')
+        .attr('class', 'line-chart')
+        .attr('transform', `translate(${dimensions.margin.left}, ${dimensions.margin.top})`)
 
     /* [4] ===== CREATE SCALE ===== */
 
@@ -93,5 +76,3 @@ async function drawChart() {
 }
 
 drawChart();
-
-
