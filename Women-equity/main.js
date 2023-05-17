@@ -15,11 +15,7 @@ let currentYear = 2000;
 let bodyScrollScore;
 
 bodyScrollScore = AddScrollScore(document.querySelector('body'), new Object)
-let animTitle = AnimationEffect([document.querySelector('#reveal')])
 
-document.querySelector('body').addEventListener('wheel', ()=> {
-    console.log(AnimationEffect)
-})
 
 /* ======= CHART CHECKILIST ========
 - [1] `Access data` -- Define how we access the values
