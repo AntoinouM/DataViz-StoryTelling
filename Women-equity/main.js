@@ -3,13 +3,23 @@ import * as d3 from 'd3';
 
 // import helping function from utils
 import {
-    transformData
+    transformData,
+    AddScrollScore,
+    AnimationEffect
 } from './src/util.js';
 
 /**
  * Setting up const & variables
  */
 let currentYear = 2000;
+let bodyScrollScore;
+
+bodyScrollScore = AddScrollScore(document.querySelector('body'), new Object)
+let animTitle = AnimationEffect([document.querySelector('#reveal')])
+
+document.querySelector('body').addEventListener('wheel', ()=> {
+    console.log(AnimationEffect)
+})
 
 /* ======= CHART CHECKILIST ========
 - [1] `Access data` -- Define how we access the values
