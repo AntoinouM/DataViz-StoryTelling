@@ -27,3 +27,29 @@
   -webkit-text-size-adjust: 100%;
 }
 
+section {
+  height: 100vh;
+  width: 100%;
+}
+
+section:nth-of-type(odd){
+  border: 2px dashed var(--color-cyan)
+}
+section:nth-of-type(even){
+  border: 2px dashed var(--color-pink)
+}
+
+#scolldowninfo {
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#infotext {
+  font-size: 1.5em;
+}
