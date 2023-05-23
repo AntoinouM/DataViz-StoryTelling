@@ -1,15 +1,46 @@
 import './style.css';
 import * as d3 from 'd3';
+import { QuestionMap } from './src/global.js';
 
 // import helping function from utils
 import {
-    transformData
+    transformData,
+    GetEvolutionSpeed
 } from './src/util.js';
+import { merge } from 'lodash';
 
 /**
  * Setting up const & variables
  */
-let currentYear = 2000;
+let currentYear = 2021;
+let mergedData;
+
+const dimensions = {
+    width: window.innerWidth * 0.75,
+    height: window.innerHeight * 0.65,
+    margin: {
+        top: 20,
+        right: 20,
+        bottom: 35,
+        left: 35
+    },
+    boundedWidth: undefined,
+    boundedHeight: undefined,
+}
+
+const colors = {
+    'bg': '#282a36',
+    'bg-sec': '#44475a',
+    'fg': '#f8f8f2',
+    'seconday': '#6272a4',
+    'cyan': '#8be9fd',
+    'green': '#50fa7b',
+    'orange': '#ffb86c',
+    'pink': '#ff79c6',
+    'purple': '#bd93f9',
+    'red': '#ff5555',
+    'yellow': '#f1fa8c'
+}
 
 /* ======= CHART CHECKILIST ========
 - [1] `Access data` -- Define how we access the values
@@ -30,28 +61,17 @@ async function drawChart() {
     const demographicsData = await d3.csv('./data/SP.POP.TOTL.FE.csv')
     const wblData = await d3.dsv(";", "./data/WBL-panel.csv")
 
-    const mergedData = transformData(wblData, worldData, demographicsData, currentYear);
+    mergedData = transformData(wblData, worldData, demographicsData, currentYear);
+    const yearMap = GetEvolutionSpeed(wblData)
 
     // Define accessor functions
     //const yAccessor = d => d.item 
     //const xAccessor = d => 
 
     /* [2] ===== CHART DIMENSION ===== */
-    const dimensions = {
-        width: window.innerWidth * 0.75,
-        height: window.innerHeight * 0.65,
-        margin: {
-            top: 20,
-            right: 20,
-            bottom: 35,
-            left: 35
-        },
-        boundedWidth: undefined,
-        boundedHeight: undefined,
-    }
-
     dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right;
     dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
+    
     /* [3] ===== DRAW CANVAS ===== */
     const wrapper = d3.select('#viz')
 

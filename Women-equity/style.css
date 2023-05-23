@@ -5,7 +5,20 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --color-bg: #282a36;
+  --color-bg-sec: #44475a;
+  --color-fg: #f8f8f2;
+  --color-seconday: #6272a4;
+  --color-cyan: #8be9fd;
+  --color-green: #50fa7b;
+  --color-orange: #ffb86c;
+  --color-pink: #ff79c6;
+  --color-purple: #bd93f9;
+  --color-red: #ff5555;
+  --color-yellow: #f1fa8c;
+
+  background-color: var(--color-bg);
+  color: var(--color-fg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
