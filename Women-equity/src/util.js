@@ -106,3 +106,36 @@ export const transformData = (wblData, worldData, demographicData, year) => { //
     return mergedData;
 }
 
+export const AddScrollScore = (element, objectScore) => {
+
+    objectScore = {
+        parent: element,
+        score: 0,
+        lastDirUp: undefined
+    }
+
+    element.addEventListener('wheel', checkScrollDirection);
+
+        function checkScrollDirection(event) {    
+            if (checkScrollDirectionIsUp(event)) {
+                objectScore.score++;
+                objectScore.lastDirUp = -1;
+            } else {
+                if (objectScore.score > 0) {
+                    objectScore.score--;  
+                } else objectScore.score = 0
+                objectScore.lastDirUp = 1; 
+            }
+
+        function checkScrollDirectionIsUp(event) {
+            if (event.wheelDelta) {
+                return event.wheelDelta > 0;
+            } else {
+            return event.deltaY < 0;
+            }
+        }
+    }   
+    return objectScore;
+}
+
+
