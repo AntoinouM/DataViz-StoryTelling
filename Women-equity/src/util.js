@@ -95,6 +95,7 @@ export const transformData = (wblData, worldData, demographicData, year) => { //
             women_population: d[`${year}`]
         }
     })
+    
 
     const mergedData = _(filteredData)                              // start sequence (start with this array)
         .keyBy('scoring.iso_code')                                  // Create a dictionary (TKey, TValue) of the first array
@@ -102,7 +103,6 @@ export const transformData = (wblData, worldData, demographicData, year) => { //
         .merge(_.keyBy(filteredDemographics, 'country_code'))   
         .values()                                                   // convert the combined dictionaries to an array again
         .value()                                                    // get the value (array) of the sequence that is returned by lodash
-
     return mergedData;
 }
 

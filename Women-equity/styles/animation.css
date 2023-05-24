@@ -4,8 +4,8 @@
     to {background-color: yellow;}
   }
 @keyframes opacityChange {
-    0% {opacity: 0;}
-    80% {opacity: 1;}
+    30% {opacity: 0;}
+    70% {opacity: 1;}
     100% {opacity: 0}
 }
 
@@ -16,6 +16,6 @@
 
 
 #infotext, #chevron {
-    opacity: 1;
-    animation: scaleUp 3s ease-in-out 2s infinite forwards, opacityChange 3s ease-in-out 2s infinite forwards;
+    opacity: 0;
+    animation: scaleUp 4s ease-in-out 2s infinite forwards, opacityChange 4s ease-in-out 2s infinite forwards;
 }

@@ -1,8 +1,9 @@
-import './style.css';
+import './styles/style.css';
 import * as d3 from 'd3';
 import { QuestionMap } from './src/global.js';
+import Map from './visualizations/Map'
 
-// import helping function from utils
+// import helping function from utilsnp
 import {
     transformData,
     GetEvolutionSpeed
@@ -12,21 +13,11 @@ import { merge } from 'lodash';
 /**
  * Setting up const & variables
  */
-let currentYear = 2021;
+let currentYear = 2023;
 let mergedData;
+let yearMap;
 
-const dimensions = {
-    width: window.innerWidth * 0.75,
-    height: window.innerHeight * 0.65,
-    margin: {
-        top: 20,
-        right: 20,
-        bottom: 35,
-        left: 35
-    },
-    boundedWidth: undefined,
-    boundedHeight: undefined,
-}
+let map;
 
 const colors = {
     'bg': '#282a36',
@@ -42,6 +33,21 @@ const colors = {
     'yellow': '#f1fa8c'
 }
 
+const configMap = {
+    parentElement: '#viz',
+    width: window.innerWidth * 0.8,
+    height: window.innerHeight * 0.65,
+    margin: {
+        top: 20,
+        right: 20,
+        bottom: 35,
+        left: 35
+    },
+    colors: colors,
+    boundedWidth: undefined,
+    boundedHeight: undefined,
+}
+
 /* ======= CHART CHECKILIST ========
 - [1] `Access data` -- Define how we access the values
 - [2] `Create chart dimensions` -- Declare the physical chart parameters
@@ -53,7 +59,7 @@ const colors = {
 */
 
 // easier to work with asynch / await
-async function drawChart() {
+async function drawViz() {
 
     /* [1] ===== ACCESS DATA ===== */
     // Load world data
@@ -62,37 +68,34 @@ async function drawChart() {
     const wblData = await d3.dsv(";", "./data/WBL-panel.csv")
 
     mergedData = transformData(wblData, worldData, demographicsData, currentYear);
-    const yearMap = GetEvolutionSpeed(wblData)
+
+    console.log(worldData)
+    console.log(demographicsData)
+    console.log(mergedData)
+
+    yearMap = GetEvolutionSpeed(wblData)
+
+    // init my data object
+    const configData = {
+        minYear: yearMap.entries().next().value[0],
+        maxYear: yearMap.entries().next().value[1],
+        currentYear: 2000,
+        minIndex: Math.floor(d3.min(wblData, (d) => +d.WBL_INDEX.replace(",", "."))),
+        maxIndex: Math.ceil(d3.max(wblData, (d) => +d.WBL_INDEX.replace(",", "."))),
+        dataAccessors: {color: 'scoring.wbl_index'}
+    }
 
     // Define accessor functions
     //const yAccessor = d => d.item 
     //const xAccessor = d => 
 
     /* [2] ===== CHART DIMENSION ===== */
-    dimensions.boundedWidth = dimensions.width - dimensions.margin.left - dimensions.margin.right;
-    dimensions.boundedHeight = dimensions.height - dimensions.margin.top - dimensions.margin.bottom;
+    configMap.boundedWidth = configMap.width - configMap.margin.left - configMap.margin.right;
+    configMap.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
+
+    map = new Map(mergedData, configMap, configData)
+    map.updateMap();
     
-    /* [3] ===== DRAW CANVAS ===== */
-    const wrapper = d3.select('#viz')
-
-    const svg = d3.select('#viz')
-        .append('svg')
-        .attr('width', dimensions.width)
-        .attr('height', dimensions.height);
-    const viz = svg.append('g')
-        .attr('class', 'line-chart')
-        .attr('transform', `translate(${dimensions.margin.left}, ${dimensions.margin.top})`)
-
-    /* [4] ===== CREATE SCALE ===== */
-
-
-    /* [5] ===== DRAW DATA ===== */
-
-    /* [6] ===== DRAW PERIPHERALS ===== */
-
-    // =====================================
-    /* [7] ===== SET UP INTERACTION ===== */
-    // =====================================
 }
 
-drawChart();
+drawViz();
