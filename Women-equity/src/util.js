@@ -106,7 +106,9 @@ export const transformData = (wblData, worldData, demographicData, year) => { //
     return mergedData;
 }
 
-export const AddScrollScore = (element, objectScore) => {
+export const AddScrollScore = (elementName, objectScore) => {
+
+    const element = document.querySelector(elementName)
 
     objectScore = {
         parent: element,

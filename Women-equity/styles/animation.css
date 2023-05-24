@@ -16,6 +16,7 @@
 
 
 #infotext, #chevron {
+    pointer-events: none;
     opacity: 0;
     animation: scaleUp 4s ease-in-out 2s infinite forwards, opacityChange 4s ease-in-out 2s infinite forwards;
 }

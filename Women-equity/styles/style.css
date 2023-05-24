@@ -31,9 +31,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-y: hidden;
 }
 
 section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   height: 100vh;
   width: 100%;
 }
@@ -56,17 +60,21 @@ section:nth-of-type(even){
   align-items: center;
 }
 
+#scolldowninfo:hover {
+  display: none;
+}
+
 #infotext {
   font-size: 1.5em;
 }
 
-#viz {
+#vizMap {
   display: flex;
   margin-top: 4%;
   justify-content: center;
 } 
 
-#title {
+#titleIntro {
   width: 50%;
   text-align: center;
   margin: 3% 0 0 0;

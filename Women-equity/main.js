@@ -6,6 +6,7 @@ import Map from './visualizations/Map'
 // import helping function from utilsnp
 import {
     transformData,
+    AddScrollScore,
     GetEvolutionSpeed
 } from './src/util.js';
 import { merge } from 'lodash';
@@ -34,7 +35,7 @@ const colors = {
 }
 
 const configMap = {
-    parentElement: '#viz',
+    parentElement: '#vizMap',
     width: window.innerWidth * 0.8,
     height: window.innerHeight * 0.65,
     margin: {
@@ -48,17 +49,19 @@ const configMap = {
     boundedHeight: undefined,
 }
 
-/* ======= CHART CHECKILIST ========
-- [1] `Access data` -- Define how we access the values
-- [2] `Create chart dimensions` -- Declare the physical chart parameters
-- [3] `Draw canvas` -- Render the wrapper and bounds element
-- [4] `Create scales` -- Create scales for every visualized attribute
-- [5] `Draw data` -- Render the data elements
-- [6] `Draw peripherals` -- Render the axes, labels, legends, annotations, etc
-- [7] `Set up interactions` -- Initialize event listeners and create interaction behavior
-*/
+// slider options
+const slider = document.querySelector('#yearSlider')
+const sliderValueSpan = document.querySelector('#rangeValue')
+sliderValueSpan.innerHTML = currentYear;
+slider.value = currentYear
 
-// easier to work with asynch / await
+slider.addEventListener('input', (e) => {
+    sliderValueSpan.innerHTML = e.target.value;
+})
+slider.addEventListener('change', (e) => {
+    sliderValueSpan.innerHTML = e.target.value;
+})
+
 async function drawViz() {
 
     /* [1] ===== ACCESS DATA ===== */
@@ -85,14 +88,11 @@ async function drawViz() {
         dataAccessors: {color: 'scoring.wbl_index'}
     }
 
-    // Define accessor functions
-    //const yAccessor = d => d.item 
-    //const xAccessor = d => 
-
     /* [2] ===== CHART DIMENSION ===== */
     configMap.boundedWidth = configMap.width - configMap.margin.left - configMap.margin.right;
     configMap.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
 
+    //configData.dataAccessors.color = null;
     map = new Map(mergedData, configMap, configData)
     map.updateMap();
     

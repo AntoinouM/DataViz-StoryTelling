@@ -39,7 +39,7 @@ class Map {
         // generators
         that.projection = d3
             .geoMercator()
-            .translate([that.configMap.width / 2, that.configMap.height / 1.4])
+            .translate([that.configMap.width / 2.2, that.configMap.height / 1.4])
             .scale([150]);
         that.path = d3.geoPath().projection(that.projection);
         // scales
@@ -81,11 +81,15 @@ class Map {
                 .attr('class', 'country')
                 .style('stroke', that.configMap.colors.fg)
                 .style('fill', (d) => {
-                    //if (d.scoring === undefined) console.log(d)
-                    if (d.scoring !== undefined) {
-                        return that.colorScale(d.scoring.wbl_index)
+                    if (that.configData.dataAccessors.color === null) {
+                        return that.configMap.colors.bg
                     } else {
-                        return that.configMap.colors.fg
+                        //if (d.scoring === undefined) console.log(d)
+                        if (d.scoring !== undefined) {
+                            return that.colorScale(d.scoring.wbl_index)
+                        } else {
+                            return that.configMap.colors.fg
+                        }
                     }
                 })
     }

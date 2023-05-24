@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>World Bank - Women Business and Law Index</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="./styles/animation.css">
-  </head>
-  <body>
 
-    <h1 id="title">Hello World</h1>
-    <div id="viz"></div>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Bank - Women Business and Law Index</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./styles/animation.css">
+  <link rel="stylesheet" href="./styles/slider.css">
+  <script src="./node_modules/waypoints//lib/noframework.waypoints.min.js"></script>
+</head>
+
+<body>
+
+  <section id="intro">
+    <h1 id="titleIntro">Hello World</h1>
+    <div id="vizMap"></div>
+    <div class='range'>
+      <div id="playBtn">▶</div>
+      <input id="yearSlider" type="range" min='1971' max='2023' step='1'/>
+      <span id="rangeValue"></span>
+    </div>
+  </section>
+  <section id="bar-chart"></section>
     <!--
-    <section id="intro"></section>
-    <section id="map"></section>
     <section id="bar-chart"></section>
     <section id="backtoback"></section>
     -->
@@ -25,5 +35,6 @@
     </div>
 
     <script type="module" src="/main.js"></script>
-  </body>
+</body>
+
 </html>
