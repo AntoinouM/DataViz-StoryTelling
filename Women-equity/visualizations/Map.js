@@ -1,8 +1,10 @@
 import * as d3 from 'd3';
+import { transformData } from '../src/util.js';
 
 class Map {
-    constructor(data, configMap, configData) {
-        this.data = data;
+    constructor(configMap, configData, dataSets, currentYear) {
+        this.dataSets = dataSets;
+        this.currentYear = currentYear;
 
         // configurate objects with default
         this.configMap = {
@@ -22,14 +24,27 @@ class Map {
             minWBLIndex: configData.minIndex || 0,
             maxWBLIndex: configData.maxIndex || 100,
             dataAccessors: configData.dataAccessors || {color: 'scoring.wbl_index'},
+            sliderGetter: configData.sliderGetter || null
         }
 
         this.initViz();
     }
 
     initViz() {
-
         const that = this;
+
+        that.data;
+        
+        if (that.configData.sliderGetter !== null) {
+            that.slider = {
+                'input': d3.select(that.configData.sliderGetter.input),
+                'span': d3.select(that.configData.sliderGetter.span),
+                'btn': d3.select(that.configData.sliderGetter.btn),
+            }
+            that.slider.span.html(that.currentYear)
+        }
+
+        that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
 
         /* **** SETUP ****/
 
@@ -66,8 +81,59 @@ class Map {
         // domain
         that.colorScale.domain([that.configData.minWBLIndex, that.configData.maxWBLIndex])
 
+        // slider update
+        if (that.configData.sliderGetter !== null) {
+            that.slider.input.on('input', function() {
+                that.currentYear = +this.value
+                that.slider.span.html(+this.value)
+
+                that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
+                that.drawMap(that.data, that.viz)
+            })
+        }
+
+        // play btn
+        let play_interval = null;
+      
+        that.slider.btn.on('click', function() {
+          if (play_interval === null) {
+            that.slider.btn.html('||')
+      
+            // start the interval
+            play_interval = setInterval(function() {
+              if (that.currentYear < that.configData.maxYear) {
+                that.currentYear += 1;
+              } else {
+                that.currentYear -= that.configData.maxYear - that.configData.minYear
+              }
+      
+              that.slider.input.node().value = that.currentYear;
+              that.slider.span.html(that.currentYear);
+              that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
+              that.drawMap(that.data, that.viz)
+            }, 70);
+          } else {
+            that.slider.btn.html('▶');
+            clearInterval(play_interval);
+            play_interval = null;
+          }
+        });
+
         // draw map initially
         this.drawMap(that.data, that.viz)
+
+        const zoom = d3.zoom()
+            .scaleExtent([1, 10]) // scale factor
+            .translateExtent([
+                [-300, -300], // x0 and y0
+                [1500, 1000] // x1 and y1
+             ])
+        .on('zoom', function(event) {
+          that.viz.attr('transform', event.transform)
+        });
+    
+        // Call the zoom on the next parent element of your 'to be zoomed' selection
+        that.svg.call(zoom);
     }
 
     drawMap(data, sel) {
@@ -88,12 +154,11 @@ class Map {
                         if (d.scoring !== undefined) {
                             return that.colorScale(d.scoring.wbl_index)
                         } else {
-                            return that.configMap.colors.fg
+                            return that.configMap.colors.bg
                         }
                     }
                 })
     }
-
 }
 
 export default Map;

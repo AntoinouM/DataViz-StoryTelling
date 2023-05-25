@@ -14,7 +14,7 @@ import { merge } from 'lodash';
 /**
  * Setting up const & variables
  */
-let currentYear = 2023;
+let currentYear = 2000;
 let mergedData;
 let yearMap;
 
@@ -49,19 +49,6 @@ const configMap = {
     boundedHeight: undefined,
 }
 
-// slider options
-const slider = document.querySelector('#yearSlider')
-const sliderValueSpan = document.querySelector('#rangeValue')
-sliderValueSpan.innerHTML = currentYear;
-slider.value = currentYear
-
-slider.addEventListener('input', (e) => {
-    sliderValueSpan.innerHTML = e.target.value;
-})
-slider.addEventListener('change', (e) => {
-    sliderValueSpan.innerHTML = e.target.value;
-})
-
 async function drawViz() {
 
     /* [1] ===== ACCESS DATA ===== */
@@ -70,22 +57,33 @@ async function drawViz() {
     const demographicsData = await d3.csv('./data/SP.POP.TOTL.FE.csv')
     const wblData = await d3.dsv(";", "./data/WBL-panel.csv")
 
+    const dataSets = {
+        'wbl': wblData,
+        'map': worldData,
+        'demo': demographicsData,
+    }
+
     mergedData = transformData(wblData, worldData, demographicsData, currentYear);
 
-    console.log(worldData)
-    console.log(demographicsData)
-    console.log(mergedData)
+    // console.log(worldData)
+    // console.log(demographicsData)
+    // console.log(mergedData)
 
     yearMap = GetEvolutionSpeed(wblData)
 
     // init my data object
     const configData = {
-        minYear: yearMap.entries().next().value[0],
-        maxYear: yearMap.entries().next().value[1],
+        minYear: +yearMap.entries().next().value[0],
+        maxYear: +yearMap.entries().next().value[1],
         currentYear: 2000,
         minIndex: Math.floor(d3.min(wblData, (d) => +d.WBL_INDEX.replace(",", "."))),
         maxIndex: Math.ceil(d3.max(wblData, (d) => +d.WBL_INDEX.replace(",", "."))),
-        dataAccessors: {color: 'scoring.wbl_index'}
+        dataAccessors: {color: 'scoring.wbl_index'},
+        sliderGetter: {
+            'input': '#yearSlider',
+            'span': '#rangeValue',
+            'btn': '#playBtn',
+        }
     }
 
     /* [2] ===== CHART DIMENSION ===== */
@@ -93,9 +91,10 @@ async function drawViz() {
     configMap.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
 
     //configData.dataAccessors.color = null;
-    map = new Map(mergedData, configMap, configData)
+    map = new Map(configMap, configData, dataSets, currentYear)
     map.updateMap();
-    
-}
+
+    const mapViz = d3.select('.mapViz')
+};
 
 drawViz();
