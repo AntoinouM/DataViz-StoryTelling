@@ -34,6 +34,7 @@ body {
 }
 
 section {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -68,6 +69,7 @@ section:nth-of-type(even){
 }
 
 #vizMap {
+  border: 1px solid var(--color-fg);
   display: flex;
   margin-top: 4%;
   justify-content: center;

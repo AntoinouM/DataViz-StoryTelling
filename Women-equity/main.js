@@ -1,6 +1,6 @@
 import './styles/style.css';
 import * as d3 from 'd3';
-import { QuestionMap } from './src/global.js';
+import { GLOBAL } from './src/global.js';
 import Map from './visualizations/Map'
 
 // import helping function from utilsnp
@@ -11,43 +11,20 @@ import {
 } from './src/util.js';
 import { merge } from 'lodash';
 
+import {
+    configMap,
+    configBarchart,
+    colors
+} from './src/config.js'
+
 /**
  * Setting up const & variables
  */
-let currentYear = 2000;
+GLOBAL.currentYear = 2000;
 let mergedData;
-let yearMap;
 
 let map;
 
-const colors = {
-    'bg': '#282a36',
-    'bg-sec': '#44475a',
-    'fg': '#f8f8f2',
-    'seconday': '#6272a4',
-    'cyan': '#8be9fd',
-    'green': '#50fa7b',
-    'orange': '#ffb86c',
-    'pink': '#ff79c6',
-    'purple': '#bd93f9',
-    'red': '#ff5555',
-    'yellow': '#f1fa8c'
-}
-
-const configMap = {
-    parentElement: '#vizMap',
-    width: window.innerWidth * 0.8,
-    height: window.innerHeight * 0.65,
-    margin: {
-        top: 20,
-        right: 20,
-        bottom: 35,
-        left: 35
-    },
-    colors: colors,
-    boundedWidth: undefined,
-    boundedHeight: undefined,
-}
 
 async function drawViz() {
 
@@ -63,21 +40,38 @@ async function drawViz() {
         'demo': demographicsData,
     }
 
-    mergedData = transformData(wblData, worldData, demographicsData, currentYear);
+    mergedData = transformData(wblData, worldData, demographicsData, GLOBAL.currentYear);
+    GLOBAL.yearMap = GetEvolutionSpeed(wblData)
 
     // console.log(worldData)
     // console.log(demographicsData)
     // console.log(mergedData)
 
-    yearMap = GetEvolutionSpeed(wblData)
+    drawMap(dataSets, GLOBAL.yearMap);
 
+
+};
+
+function drawBarchart(dataSets) {
+    // init data object
+    const configData = {
+        orientationHorizontal: false,
+
+    }
+
+    /* [2] ===== CHART DIMENSION ===== */
+    configBarchart.boundedWidth = configMap.width - configMap.margin.left - configMap.margin.right;
+    configBarchart.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
+}
+
+function drawMap(dataSets, yearMap) {
     // init my data object
     const configData = {
-        minYear: +yearMap.entries().next().value[0],
-        maxYear: +yearMap.entries().next().value[1],
-        currentYear: 2000,
-        minIndex: Math.floor(d3.min(wblData, (d) => +d.WBL_INDEX.replace(",", "."))),
-        maxIndex: Math.ceil(d3.max(wblData, (d) => +d.WBL_INDEX.replace(",", "."))),
+        minYear: +GLOBAL.yearMap.entries().next().value[0],
+        maxYear: +GLOBAL.yearMap.entries().next().value[1],
+        currentYear: GLOBAL.currentYear,
+        minIndex: Math.floor(d3.min(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))),
+        maxIndex: Math.ceil(d3.max(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))),
         dataAccessors: {color: 'scoring.wbl_index'},
         sliderGetter: {
             'input': '#yearSlider',
@@ -91,10 +85,8 @@ async function drawViz() {
     configMap.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
 
     //configData.dataAccessors.color = null;
-    map = new Map(configMap, configData, dataSets, currentYear)
+    map = new Map(configMap, configData, dataSets, GLOBAL.currentYear)
     map.updateMap();
-
-    const mapViz = d3.select('.mapViz')
-};
+}
 
 drawViz();

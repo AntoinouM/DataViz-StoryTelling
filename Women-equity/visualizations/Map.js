@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { transformData } from '../src/util.js';
+import { GLOBAL } from '../src/global.js';
 
 class Map {
     constructor(configMap, configData, dataSets, currentYear) {
@@ -144,7 +145,8 @@ class Map {
             .data(data)
             .join('path')
                 .attr('d', that.path)
-                .attr('class', 'country')
+                .attr('class', 'country')  
+                .style('fill', that.configMap.colors.bg)
                 .style('stroke', that.configMap.colors.fg)
                 .style('fill', (d) => {
                     if (that.configData.dataAccessors.color === null) {
@@ -158,6 +160,15 @@ class Map {
                         }
                     }
                 })
+        this.updateCountry(countries)
+    }
+
+    updateCountry(countries) {
+        countries.on('click', function(event, d) {
+            GLOBAL.currentCountry.code = d.country_code;
+            GLOBAL.currentCountry.name = d.properties.geounit;
+            console.log(GLOBAL.currentCountry)
+        })
     }
 }
 
