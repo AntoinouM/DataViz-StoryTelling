@@ -1,4 +1,5 @@
 import _, { forEach, lte } from 'lodash';
+import * as d3 from 'd3';
 
 /**
  * The function will grab the current year data from both sets and merges them
@@ -19,45 +20,49 @@ export const GetEvolutionSpeed = (wblData) => {
             report_year: rows['Report_Year'],
             wbl_index: +rows['WBL_INDEX'].replace(",", ".")
         }
-    })               
-
-    let years = [];
-    wblData.forEach(element => {
-        years.push(element.report_year)
+    }) 
+    
+    let years = new Set();
+    wblData.forEach((element, index) => {
+        if (!element.wbl_index) wblData.splice(index, 1)
+        years.add(element.report_year)
     });
 
+    years = Array.from(years)
+  
     let maxYear = Math.max.apply(null, years)
     let minYear = Math.min.apply(null, years)
 
     const filteredDataMaxYear = _.chain(wblData.filter((e) => +e.report_year === maxYear))
         .groupBy('region')
         .map((group, key) => ({ key, val : _.meanBy(group, 'wbl_index') }))
-        .value();
+        .value();    
 
     const filteredDataMinYear = _.chain(wblData.filter((e) => +e.report_year === minYear))
         .groupBy('region')
         .map((group, key) => ({ key, val : _.meanBy(group, 'wbl_index') }))
         .value();
 
-    let diffMap = new Map();
-    let spdMap = new Map();
     let remainTime = new Map();
 
 
     for (let i = 0; i < filteredDataMaxYear.length; i++) {
-        diffMap.set(filteredDataMaxYear[i].key, (filteredDataMaxYear[i].val - filteredDataMinYear[i].val).toFixed(2))
         let averageProgressByYear = (filteredDataMaxYear[i].val - filteredDataMinYear[i].val)/(maxYear-minYear)
-        spdMap.set(filteredDataMaxYear[i].key, averageProgressByYear.toFixed(2))
         let diffTo100 = 100 - (+filteredDataMaxYear[i].val);
         remainTime.set(filteredDataMaxYear[i].key, Math.ceil(+diffTo100/+averageProgressByYear))
     }
 
-    let yearMap = new Map();
-    yearMap.set(minYear, filteredDataMinYear)
-    yearMap.set(maxYear, filteredDataMaxYear)
-    yearMap.set("difference", diffMap)
-    yearMap.set("changeRate", spdMap)
-    yearMap.set("remainTime", remainTime)
+    let yearMap = {
+        years: {
+            min: minYear,
+            max: maxYear,
+        },
+        data: {
+            minYear: filteredDataMinYear,
+            maxYear: filteredDataMaxYear,
+        },
+        'remainingTime': remainTime,
+    }
 
     return yearMap;
 }

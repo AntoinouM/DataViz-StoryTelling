@@ -167,7 +167,6 @@ class Map {
         countries.on('click', function(event, d) {
             GLOBAL.currentCountry.code = d.country_code;
             GLOBAL.currentCountry.name = d.properties.geounit;
-            console.log(GLOBAL.currentCountry)
         })
     }
 }

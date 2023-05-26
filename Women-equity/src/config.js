@@ -28,9 +28,9 @@ const configMap = {
 }
 
 const configBarchart = {
-    parentElement: '#vizMap',
-    width: window.innerWidth * 0.6,
-    height: window.innerHeight * 0.4,
+    parentElement: '#vizBarchart',
+    width: window.innerWidth * 0.7,
+    height: window.innerHeight * 0.55,
     margin: {
         top: 20,
         right: 35,
@@ -38,8 +38,10 @@ const configBarchart = {
         left: 20
     },
     colors: colors,
+    colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
     boundedWidth: undefined,
     boundedHeight: undefined,
+    orientationHorizontal: false,
 }
 
 
