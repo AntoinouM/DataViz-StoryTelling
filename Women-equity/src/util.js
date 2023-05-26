@@ -1,5 +1,6 @@
 import _, { forEach, lte } from 'lodash';
 import * as d3 from 'd3';
+import { GLOBAL } from './global';
 
 /**
  * The function will grab the current year data from both sets and merges them
@@ -67,7 +68,7 @@ export const GetEvolutionSpeed = (wblData) => {
     return yearMap;
 }
 
-export const transformData = (wblData, worldData, demographicData, year) => { // we use liodash to simplify the code {vanilla: filter both array then merge}, lodash work with sequence like d3 works with select
+export const transformData = (wblData, worldData, demographicData, year, country) => { // we use liodash to simplify the code {vanilla: filter both array then merge}, lodash work with sequence like d3 works with select
     
     const mappedWBL = wblData.map( (rows) => {
         return {
@@ -87,7 +88,6 @@ export const transformData = (wblData, worldData, demographicData, year) => { //
                     entrepreneurship: +rows['ENTREPRENEURSHIP'],
                     assets: +rows['ASSETS'],
                     pension: +rows['PENSION'],
-                    passport: rows['passport?']
                 }
             },
     questions: {
@@ -159,13 +159,18 @@ export const transformData = (wblData, worldData, demographicData, year) => { //
         }
     })
     
-
-    const mergedData = _(filteredData)                              // start sequence (start with this array)
+    let mergedData = _(filteredData)                              // start sequence (start with this array)
         .keyBy('scoring.iso_code')                                  // Create a dictionary (TKey, TValue) of the first array
         .merge(_.keyBy(worldData.features, 'properties.iso_a3'))    // Create a dictionary of the second array and merge it to the first one
         .merge(_.keyBy(filteredDemographics, 'country_code'))   
         .values()                                                   // convert the combined dictionaries to an array again
-        .value()                                                    // get the value (array) of the sequence that is returned by lodash
+        .value()                                               // get the value (array) of the sequence that is returned by lodash
+
+    if (country) {
+        mergedData = _.chain(mergedData.filter((e) => e.country_code === GLOBAL.currentCountry.code))
+        .value()
+    }
+    
     return mergedData;
 }
 

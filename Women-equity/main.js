@@ -33,7 +33,7 @@ async function drawViz() {
     const demographicsData = await d3.csv('./data/SP.POP.TOTL.FE.csv')
     const wblData = await d3.dsv(";", "./data/WBL-panel.csv")
 
-    const dataSets = {
+    GLOBAL.dataSets = {
         'wbl': wblData,
         'map': worldData,
         'demo': demographicsData,
@@ -46,9 +46,26 @@ async function drawViz() {
     // console.log(demographicsData)
     // console.log(mergedData)
 
-    drawMap(dataSets);
-    drawBarchart(dataSets);
+    drawMap(GLOBAL.dataSets);
+    drawCountryBarchart(GLOBAL.dataSet)
+    //drawBarchart(dataSets);
 };
+
+function drawCountryBarchart(dataSets) {
+    // init data object
+    const configData = {
+        xAxisTicks: '%',
+        yAxisTicks: 'Region',
+        maxValue: 100,
+        bandArray: [],
+        dataAccessors: {
+            color: 'key',
+            x: 'key',
+            y: 'val',
+        }
+    }
+    // draw barchart for all (meanBy)
+}
 
 function drawBarchart(dataSets) {
     // init data object
@@ -63,10 +80,6 @@ function drawBarchart(dataSets) {
             y: 'val',
         }
     }
-
-    /* [2] ===== CHART DIMENSION ===== */
-    configBarchart.boundedWidth = configMap.width - configMap.margin.left - configMap.margin.right;
-    configBarchart.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
 
     GLOBAL.yearMap.data.maxYear.forEach(element => {
         configData.bandArray.push(element.key)

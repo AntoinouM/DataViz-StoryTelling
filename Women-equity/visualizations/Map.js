@@ -10,6 +10,7 @@ class Map {
         // configurate objects with default
         this.configMap = {
             parentElement: configMap.parentElement || 'body',
+            linkedElement: configMap.linkedElement || '#bar-chart',
             width: configMap.width || window.innerWidth * 0.75,
             height: configMap.height || window.innerHeight * 0.65,
             margin: configMap.margin || {top: 20,right: 20,bottom: 35,left: 35},
@@ -164,9 +165,19 @@ class Map {
     }
 
     updateCountry(countries) {
+        const that = this;
         countries.on('click', function(event, d) {
             GLOBAL.currentCountry.code = d.country_code;
             GLOBAL.currentCountry.name = d.properties.geounit;
+
+            // update data
+            GLOBAL.currentCountry.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear, GLOBAL.currentCountry.name);
+
+            d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)
+            GLOBAL.currentCountry.drawBarchart();
+
+            const barchartSection = document.querySelector(that.configMap.linkedElement)
+            barchartSection.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
         })
     }
 }

@@ -56,7 +56,7 @@ class Barchart {
         that.xScale = d3
           .scaleBand()
           .range([0, that.configBarchart.boundedWidth])
-          .paddingInner(0.2);
+          .paddingInner(0.3);
     
         // Initialize the axes
         that.yAxis = d3.axisLeft(that.yScale).ticks(6);
@@ -86,6 +86,12 @@ class Barchart {
           .attr("transform", `translate(0, ${that.configBarchart.boundedHeight})`);
     
         that.yAxisG = that.viz.append("g").attr("class", "axis y-axis");
+
+        if (!that.configBarchart.orientationHorizontal) {
+          console.log('vertical baby')
+          // switch the axis around
+        }
+
       }
     
       update() {
@@ -97,7 +103,7 @@ class Barchart {
     
         // Set the domain for the Scales
         that.xScale.domain(that.configData.bandArray);
-        that.yScale.domain([0, d3.max(that.dataMax, that.yAccessor)])
+        that.yScale.domain([0, that.configData.maxValue])
                 
         // colorScale
         that.colorScale = d3.scaleOrdinal()
@@ -124,6 +130,8 @@ class Barchart {
           .attr("y", (d) => that.yScale(that.yAccessor(d)))
           .attr('width', that.xScale.bandwidth())
           .attr('height', d => that.configBarchart.boundedHeight - that.yScale(that.yAccessor(d)))
+          .transition()
+          .duration(500)
           .attr('fill', d => that.colorScale(that.colorAccessor(d)))
     
         // Create Axis
