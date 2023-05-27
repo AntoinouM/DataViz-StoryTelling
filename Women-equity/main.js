@@ -47,31 +47,14 @@ async function drawViz() {
     // console.log(mergedData)
 
     drawMap(GLOBAL.dataSets);
-    drawCountryBarchart(GLOBAL.dataSet)
-    //drawBarchart(dataSets);
+    drawBarchart(GLOBAL.dataSets);
 };
-
-function drawCountryBarchart(dataSets) {
-    // init data object
-    const configData = {
-        xAxisTicks: '%',
-        yAxisTicks: 'Region',
-        maxValue: 100,
-        bandArray: [],
-        dataAccessors: {
-            color: 'key',
-            x: 'key',
-            y: 'val',
-        }
-    }
-    // draw barchart for all (meanBy)
-}
 
 function drawBarchart(dataSets) {
     // init data object
     const configData = {
-        xAxisTicks: '%',
-        yAxisTicks: 'Region',
+        xAxisTicks: 'Region',
+        yAxisTicks: '%',
         maxValue: 100,
         bandArray: [],
         dataAccessors: {
@@ -95,7 +78,7 @@ function drawBarchart(dataSets) {
     })
 
 
-    barchartHorizontal = new Barchart(configBarchart, configData, dataSets)
+    barchartHorizontal = new Barchart(configBarchart.region, configData)
     barchartHorizontal.update()
 
 }

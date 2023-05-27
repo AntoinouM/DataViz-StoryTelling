@@ -4,9 +4,13 @@ import {
 } from '../src/global.js';
 
 class Barchart {
-    constructor(configBarchart, configData, dataSets) {
-        this.dataMax = GLOBAL.yearMap.data.maxYear;
-        this.dataMin = GLOBAL.yearMap.data.minYear;
+    constructor(configBarchart, configData, data) {
+      if (!data) {
+        this.data = GLOBAL.yearMap.data.maxYear;
+      } else {
+        this.data = data
+      }
+
 
         this.configBarchart = {
             parentElement: configBarchart.parentElement || '#vizBarchart',
@@ -88,7 +92,7 @@ class Barchart {
         that.yAxisG = that.viz.append("g").attr("class", "axis y-axis");
 
         if (!that.configBarchart.orientationHorizontal) {
-          console.log('vertical baby')
+
           // switch the axis around
         }
 
@@ -96,6 +100,7 @@ class Barchart {
     
       update() {
         const that = this;
+        console.log(that.data)
     
         that.colorAccessor = (d) => d[that.configData.dataAccessors.color];
         that.xAccessor = (d) => d[that.configData.dataAccessors.x];
@@ -106,9 +111,11 @@ class Barchart {
         that.yScale.domain([0, that.configData.maxValue])
                 
         // colorScale
-        that.colorScale = d3.scaleOrdinal()
+        if (that.configBarchart.colorScale) {
+          that.colorScale = d3.scaleOrdinal()
             .range(that.configBarchart.colorScale)
             .domain(that.configData.bandArray);
+        }
     
         this.render(); // trigger the render of the visualization
       }
@@ -123,16 +130,23 @@ class Barchart {
         // Create the bars
         const bars = that.viz
           .selectAll("rect")
-          .data(that.dataMax)
+          .data(that.data)
           .join("rect")
           .attr("class", "bar")
           .attr("x", (d) => that.xScale(that.xAccessor(d)))
           .attr("y", (d) => that.yScale(that.yAccessor(d)))
           .attr('width', that.xScale.bandwidth())
-          .attr('height', d => that.configBarchart.boundedHeight - that.yScale(that.yAccessor(d)))
+          .attr('height', d => {
+            return that.configBarchart.boundedHeight - that.yScale(that.yAccessor(d))
+          })
           .transition()
-          .duration(500)
-          .attr('fill', d => that.colorScale(that.colorAccessor(d)))
+          .duration(500);
+          if (that.configBarchart.colorScale) {
+            bars.attr('fill', d => that.colorScale(that.colorAccessor(d)))
+          } else {
+            bars.attr('fill', that.configBarchart.colors.orange)
+          }
+          
     
         // Create Axis
         that.xAxisG

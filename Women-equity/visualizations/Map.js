@@ -1,6 +1,10 @@
 import * as d3 from 'd3';
-import { transformData } from '../src/util.js';
-import { GLOBAL } from '../src/global.js';
+import {
+    transformData
+} from '../src/util.js';
+import {
+    GLOBAL
+} from '../src/global.js';
 
 class Map {
     constructor(configMap, configData, dataSets, currentYear) {
@@ -13,10 +17,18 @@ class Map {
             linkedElement: configMap.linkedElement || '#bar-chart',
             width: configMap.width || window.innerWidth * 0.75,
             height: configMap.height || window.innerHeight * 0.65,
-            margin: configMap.margin || {top: 20,right: 20,bottom: 35,left: 35},
-            colors: configMap.colors || {'fg' : '#f8f8f2', 'bg': '#282a36'},
+            margin: configMap.margin || {
+                top: 20,
+                right: 20,
+                bottom: 35,
+                left: 35
+            },
+            colors: configMap.colors || {
+                'fg': '#f8f8f2',
+                'bg': '#282a36'
+            },
             //colorScale: configMap.colorScale || [ '#bca0dc', '#b491c8', '#7c5295', '#663a82', '#52307c', '#3c1361'],
-            colorScale: configMap.colorScale || [ '#bca0dc', '#663a82', '#3c1361'],
+            colorScale: configMap.colorScale || ['#bca0dc', '#663a82', '#3c1361'],
         }
 
         this.configData = {
@@ -25,7 +37,9 @@ class Map {
             currentYear: configData.currentYear || 2000,
             minWBLIndex: configData.minIndex || 0,
             maxWBLIndex: configData.maxIndex || 100,
-            dataAccessors: configData.dataAccessors || {color: 'scoring.wbl_index'},
+            dataAccessors: configData.dataAccessors || {
+                color: 'scoring.wbl_index'
+            },
             sliderGetter: configData.sliderGetter || null
         }
 
@@ -36,7 +50,7 @@ class Map {
         const that = this;
 
         that.data;
-        
+
         if (that.configData.sliderGetter !== null) {
             that.slider = {
                 'input': d3.select(that.configData.sliderGetter.input),
@@ -66,13 +80,13 @@ class Map {
         // svg
         that.svg = d3.select(that.configMap.parentElement)
             .append('svg')
-                .attr('width', that.configMap.width)
-                .attr('height', that.configMap.height)
+            .attr('width', that.configMap.width)
+            .attr('height', that.configMap.height)
         // drawing area
         that.viz = that.svg
             .append('g')
-                .attr('class', 'mapViz')
-                .attr('transform', `translate(${that.configMap.margin.left}, 0)`);
+            .attr('class', 'mapViz')
+            .attr('transform', `translate(${that.configMap.margin.left}, 0)`);
     }
 
     updateMap() {
@@ -85,7 +99,7 @@ class Map {
 
         // slider update
         if (that.configData.sliderGetter !== null) {
-            that.slider.input.on('input', function() {
+            that.slider.input.on('input', function () {
                 that.currentYear = +this.value
                 that.slider.span.html(+this.value)
 
@@ -96,46 +110,46 @@ class Map {
 
         // play btn
         let play_interval = null;
-      
-        that.slider.btn.on('click', function() {
-          if (play_interval === null) {
-            that.slider.btn.html('||')
-      
-            // start the interval
-            play_interval = setInterval(function() {
-              if (that.currentYear < that.configData.maxYear) {
-                that.currentYear += 1;
-              } else {
-                that.currentYear -= that.configData.maxYear - that.configData.minYear
-              }
-      
-              that.slider.input.node().value = that.currentYear;
-              that.slider.span.html(that.currentYear);
-              that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
-              that.drawMap(that.data, that.viz)
-            }, 70);
-          } else {
-            that.slider.btn.html('▶');
-            clearInterval(play_interval);
-            play_interval = null;
-          }
+
+        that.slider.btn.on('click', function () {
+            if (play_interval === null) {
+                that.slider.btn.html('||')
+
+                // start the interval
+                play_interval = setInterval(function () {
+                    if (that.currentYear < that.configData.maxYear) {
+                        that.currentYear += 1;
+                    } else {
+                        that.currentYear -= that.configData.maxYear - that.configData.minYear
+                    }
+
+                    that.slider.input.node().value = that.currentYear;
+                    that.slider.span.html(that.currentYear);
+                    that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
+                    that.drawMap(that.data, that.viz)
+                }, 70);
+            } else {
+                that.slider.btn.html('▶');
+                clearInterval(play_interval);
+                play_interval = null;
+            }
         });
 
         // draw map initially
         this.drawMap(that.data, that.viz)
 
-        const zoom = d3.zoom()
+        that.zoom = d3.zoom()
             .scaleExtent([1, 10]) // scale factor
             .translateExtent([
                 [-300, -300], // x0 and y0
                 [1500, 1000] // x1 and y1
-             ])
-        .on('zoom', function(event) {
-          that.viz.attr('transform', event.transform)
-        });
-    
+            ])
+            .on('zoom', function (event) {
+                that.viz.attr('transform', event.transform)
+            });
+
         // Call the zoom on the next parent element of your 'to be zoomed' selection
-        that.svg.call(zoom);
+        that.svg.call(that.zoom);
     }
 
     drawMap(data, sel) {
@@ -145,29 +159,34 @@ class Map {
             .selectAll('path')
             .data(data)
             .join('path')
-                .attr('d', that.path)
-                .attr('class', 'country')  
-                .style('fill', that.configMap.colors.bg)
-                .style('stroke', that.configMap.colors.fg)
-                .style('fill', (d) => {
-                    if (that.configData.dataAccessors.color === null) {
-                        return that.configMap.colors.bg
+            .attr('d', that.path)
+            .attr('class', 'country')
+            .style('fill', that.configMap.colors.bg)
+            .style('stroke', that.configMap.colors.fg)
+            .style('fill', (d) => {
+                if (that.configData.dataAccessors.color === null) {
+                    return that.configMap.colors.bg
+                } else {
+                    //if (d.scoring === undefined) console.log(d)
+                    if (d.scoring !== undefined) {
+                        return that.colorScale(d.scoring.wbl_index)
                     } else {
-                        //if (d.scoring === undefined) console.log(d)
-                        if (d.scoring !== undefined) {
-                            return that.colorScale(d.scoring.wbl_index)
-                        } else {
-                            return that.configMap.colors.bg
-                        }
+                        return that.configMap.colors.bg
                     }
-                })
+                }
+            })
         this.updateCountry(countries)
     }
-    
+
 
     updateCountry(countries) {
         const that = this;
-        countries.on('click', function(event, d) {
+        countries.on('click', function (event, d) {
+            // reset zoom
+            that.svg.transition()
+                .duration(350)
+                .call(that.zoom.transform, d3.zoomIdentity);
+
             GLOBAL.currentCountry.code = d.country_code;
             GLOBAL.currentCountry.name = d.properties.geounit;
 
@@ -177,14 +196,21 @@ class Map {
             d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)
 
             // clear first child
-            if(document.querySelector('#vizBarchart').firstElementChild) {
+            if (document.querySelector('#vizBarchart').firstElementChild) {
                 document.querySelector('#vizBarchart').firstElementChild.remove();
             }
 
             GLOBAL.currentCountry.drawBarchart();
 
             const barchartSection = document.querySelector(that.configMap.linkedElement)
-            barchartSection.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
+            setTimeout(function() {
+                barchartSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                    inline: 'start'
+                });
+            }, 150)
+
         })
     }
 }

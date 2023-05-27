@@ -6,10 +6,19 @@ const GLOBAL = {
         code: undefined,
         name: undefined,
         data: undefined,
+        dataBarchart: [],
+        dataQuestions: undefined,
         currentYear: undefined,
         yearMap: undefined,
         dataSets: undefined,
-        drawBarchart: function() {
+
+        drawBarchart: function() {    
+            this.dataBarchart = []
+            for (const [key, value] of Object.entries(this.data[0].scoring.indicators)) {
+                this.dataBarchart.push({'key': key, 'val': value})
+            }
+            console.log(this.dataBarchart)
+            
             const configData = {
                 xAxisTicks: '%',
                 yAxisTicks: 'Indicator',
@@ -21,8 +30,10 @@ const GLOBAL = {
                     y: 'val',
                 }
             }
+            //this.dataBarchart = Array.from(this.data[0].scoring.indicators);
+            this.dataQuestions = this.data[0].questions;
 
-            const barchart = new Barchart(configBarchart, configData, this.dataSets, this.name)
+            const barchart = new Barchart(configBarchart.country, configData, this.dataBarchart)
             barchart.update();
         }
     },
