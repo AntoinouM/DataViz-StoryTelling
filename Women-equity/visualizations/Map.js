@@ -77,6 +77,9 @@ class Map {
         that.colorScale = d3
             .scaleSequential()
             .interpolator(d3.interpolateBuPu);
+        if (document.querySelector(that.configMap.parentElement).firstElementChild) {
+            document.querySelector(that.configMap.parentElement).innerHTML = '';
+        }
         // svg
         that.svg = d3.select(that.configMap.parentElement)
             .append('svg')
@@ -101,6 +104,7 @@ class Map {
         if (that.configData.sliderGetter !== null) {
             that.slider.input.on('input', function () {
                 that.currentYear = +this.value
+                GLOBAL.currentYear = +this.value
                 that.slider.span.html(+this.value)
 
                 that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
@@ -124,6 +128,7 @@ class Map {
                     }
 
                     that.slider.input.node().value = that.currentYear;
+                    GLOBAL.currentYear = that.currentYear
                     that.slider.span.html(that.currentYear);
                     that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
                     that.drawMap(that.data, that.viz)
@@ -195,15 +200,26 @@ class Map {
 
             d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)
 
-            // clear first child
-            if (document.querySelector('#vizBarchart').firstElementChild) {
-                document.querySelector('#vizBarchart').firstElementChild.remove();
+            // show slider
+            d3.select('#timeWheel').style('opacity', 1)
+            d3.select('#selected').html(GLOBAL.currentYear)
+
+            if (GLOBAL.currentYear === GLOBAL.yearMap.years.min) {
+                d3.select('#prev').text('')
+            } else {
+                d3.select('#prev').text(GLOBAL.currentYear - 1)
             }
 
-            GLOBAL.currentCountry.drawBarchart();
+            if (GLOBAL.currentYear === GLOBAL.yearMap.years.max) {
+                d3.select('#next').text('')
+            } else {
+                d3.select('#next').text(GLOBAL.currentYear + 1)
+            }
+
+            GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'));
 
             const barchartSection = document.querySelector(that.configMap.linkedElement)
-            setTimeout(function() {
+            setTimeout(function () {
                 barchartSection.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start',
