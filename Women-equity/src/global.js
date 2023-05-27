@@ -2,6 +2,7 @@ import Barchart from "../visualizations/Barchart"
 import { configBarchart } from "./config"
 
 const GLOBAL = {
+    yearMap: undefined,
     currentCountry : {
         code: undefined,
         name: undefined,
@@ -9,15 +10,13 @@ const GLOBAL = {
         dataBarchart: [],
         dataQuestions: undefined,
         currentYear: undefined,
-        yearMap: undefined,
         dataSets: undefined,
 
-        drawBarchart: function() {    
+        drawBarchart: function(DOMelem) {    
             this.dataBarchart = []
             for (const [key, value] of Object.entries(this.data[0].scoring.indicators)) {
                 this.dataBarchart.push({'key': key, 'val': value})
             }
-            console.log(this.dataBarchart)
             
             const configData = {
                 xAxisTicks: '%',
@@ -32,6 +31,11 @@ const GLOBAL = {
             }
             //this.dataBarchart = Array.from(this.data[0].scoring.indicators);
             this.dataQuestions = this.data[0].questions;
+
+            // clear first child
+            if (DOMelem.firstElementChild) {
+                DOMelem.firstElementChild.remove();
+            }
 
             const barchart = new Barchart(configBarchart.country, configData, this.dataBarchart)
             barchart.update();

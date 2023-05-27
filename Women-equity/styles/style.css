@@ -31,6 +31,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
 }
 
 section {
@@ -42,11 +43,33 @@ section {
   width: 100%;
 }
 
-section:nth-of-type(odd){
-  border: 2px dashed var(--color-cyan)
+h1 {
+  font-size: 2em;
 }
-section:nth-of-type(even){
-  border: 2px dashed var(--color-pink)
+
+#return-map {
+  position: absolute;
+  opacity: 0.4;
+  top: 0;
+  margin-top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#return-map:hover {
+  opacity: 1;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  transition-timing-function: ease-in;
+
+}
+
+#upText {
+  font-size: 1.5em;
 }
 
 #scolldowninfo {
@@ -79,4 +102,8 @@ section:nth-of-type(even){
   width: 50%;
   text-align: center;
   margin: 3% 0 0 0;
+}
+
+#titleBarchart {
+  margin-top: 10%;
 }

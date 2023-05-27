@@ -5,13 +5,7 @@ import {
 
 class Barchart {
     constructor(configBarchart, configData, data) {
-      if (!data) {
-        this.data = GLOBAL.yearMap.data.maxYear;
-      } else {
         this.data = data
-      }
-
-
         this.configBarchart = {
             parentElement: configBarchart.parentElement || '#vizBarchart',
             width: configBarchart.width || window.innerWidth * 0.7,
@@ -100,7 +94,6 @@ class Barchart {
     
       update() {
         const that = this;
-        console.log(that.data)
     
         that.colorAccessor = (d) => d[that.configData.dataAccessors.color];
         that.xAccessor = (d) => d[that.configData.dataAccessors.x];
@@ -135,19 +128,19 @@ class Barchart {
           .attr("class", "bar")
           .attr("x", (d) => that.xScale(that.xAccessor(d)))
           .attr("y", (d) => that.yScale(that.yAccessor(d)))
-          .attr('width', that.xScale.bandwidth())
-          .attr('height', d => {
-            return that.configBarchart.boundedHeight - that.yScale(that.yAccessor(d))
-          })
-          .transition()
-          .duration(500);
+          .attr('width', that.xScale.bandwidth());
+
+        bars.transition()
+          .duration(700)
+          .delay(150)
+          .delay((d,i) => (i*75))
+          .attr('height', d => that.configBarchart.boundedHeight - that.yScale(that.yAccessor(d)))
           if (that.configBarchart.colorScale) {
             bars.attr('fill', d => that.colorScale(that.colorAccessor(d)))
           } else {
             bars.attr('fill', that.configBarchart.colors.orange)
           }
           
-    
         // Create Axis
         that.xAxisG
           .transition()
