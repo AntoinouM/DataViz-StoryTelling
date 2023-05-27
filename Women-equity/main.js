@@ -69,7 +69,6 @@ async function drawViz() {
         span.html(GLOBAL.currentYear);
 
         // redraw map
-        
         drawMap(GLOBAL.dataSets);
 
         document.querySelector('#map-section').scrollIntoView({
@@ -79,39 +78,8 @@ async function drawViz() {
         });
     })
 
-    // scrolling event
-    const barChartSlider = document.querySelector('#timeWheel');
-    let years = GLOBAL.yearMap.years.array;
-    let maxIndex = years.indexOf(GLOBAL.yearMap.years.max)
-    let barChartSliderScore;
-
-    barChartSliderScore = AddScrollScore('#timeWheel', barChartSliderScore, maxIndex)
-    barChartSlider.addEventListener('wheel', modifyYearOnScroll);
-
-    barChartSliderScore.score = years.indexOf(GLOBAL.currentYear)
-
-    function modifyYearOnScroll(event) {
-        const selected = d3.select('#selected')
-        
-        selected.html(years[barChartSliderScore.score])
-        GLOBAL.currentYear = years[barChartSliderScore.score]
-
-        if (GLOBAL.currentYear === GLOBAL.yearMap.years.min) {
-            d3.select('#prev').text('')
-        } else {
-            d3.select('#prev').text(GLOBAL.currentYear - 1)
-        }
-
-        if (GLOBAL.currentYear === GLOBAL.yearMap.years.max) {
-            d3.select('#next').text('')
-        } else {
-            d3.select('#next').text(GLOBAL.currentYear + 1)
-        }
-
-        // redraw chart
-        GLOBAL.currentCountry.data = transformData(GLOBAL.dataSets.wbl, GLOBAL.dataSets.map, GLOBAL.dataSets.demo, GLOBAL.currentYear, GLOBAL.currentCountry.name);
-        GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'))
-    }
+    // Manage scrolling event for barchart year
+    addScrollingEventYear()
 
     drawMap(GLOBAL.dataSets);
     drawBarchart(mergedData);
@@ -147,7 +115,6 @@ function drawBarchart(mergedData) {
     // *********** TO FIX
     //getMeanIndicatorsGlobal(GLOBAL.dataSets.wbl, GLOBAL.currentYear)
 
-
     //barchartHorizontal = new Barchart(configBarchart.region, configData, mergedData)
     //barchartHorizontal.update()
 
@@ -178,6 +145,55 @@ function drawMap(dataSets) {
     //configData.dataAccessors.color = null;
     map = new Map(configMap, configData, dataSets, GLOBAL.currentYear)
     map.updateMap();
+}
+
+function addScrollingEventYear() {
+    // scrolling event
+    const barChartSlider = document.querySelector('#timeWheel');
+    let years = GLOBAL.yearMap.years.array;
+    let maxIndex = years.indexOf(GLOBAL.yearMap.years.max)
+    let barChartSliderScore;
+
+    barChartSliderScore = AddScrollScore('#timeWheel', barChartSliderScore, maxIndex)
+    barChartSlider.addEventListener('wheel', modifyYearOnScroll);
+    barChartSliderScore.score = years.indexOf(GLOBAL.currentYear)
+
+    // set Mutable Observer
+    observeYear(document.getElementById('selected'), {attributes: true, childList: true, subtree: true})
+
+    function modifyYearOnScroll(event) {
+        const selected = d3.select('#selected')
+
+        selected.html(GLOBAL.yearMap.years.array[barChartSliderScore.score])
+        GLOBAL.currentYear = GLOBAL.yearMap.years.array[barChartSliderScore.score]
+
+        if (GLOBAL.currentYear === GLOBAL.yearMap.years.min) {
+            d3.select('#prev').text('')
+        } else {
+            d3.select('#prev').text(GLOBAL.currentYear - 1)
+        }
+
+        if (GLOBAL.currentYear === GLOBAL.yearMap.years.max) {
+            d3.select('#next').text('')
+        } else {
+            d3.select('#next').text(GLOBAL.currentYear + 1)
+        }
+    }
+}
+
+function observeYear(DOMelem, config) {
+
+    // Callback function to execute when mutations are observed
+    const callback = (mutationList, observer) => {
+        // redraw chart
+        GLOBAL.currentCountry.data = transformData(GLOBAL.dataSets.wbl, GLOBAL.dataSets.map, GLOBAL.dataSets.demo, GLOBAL.currentYear, GLOBAL.currentCountry.name);
+        GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'))
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
+    // Start observing the target node for configured mutations
+    observer.observe(DOMelem, config);
 }
 
 drawViz();

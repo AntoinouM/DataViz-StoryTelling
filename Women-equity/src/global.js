@@ -3,6 +3,10 @@ import { configBarchart } from "./config"
 
 const GLOBAL = {
     yearMap: undefined,
+    currentIndicator: {
+        name: undefined,
+        questions: undefined,
+    },
     currentCountry : {
         code: undefined,
         name: undefined,
@@ -11,7 +15,6 @@ const GLOBAL = {
         dataQuestions: undefined,
         currentYear: undefined,
         dataSets: undefined,
-
         drawBarchart: function(DOMelem) {    
             this.dataBarchart = []
             for (const [key, value] of Object.entries(this.data[0].scoring.indicators)) {
