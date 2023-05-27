@@ -163,6 +163,7 @@ class Map {
                 })
         this.updateCountry(countries)
     }
+    
 
     updateCountry(countries) {
         const that = this;
@@ -174,6 +175,12 @@ class Map {
             GLOBAL.currentCountry.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear, GLOBAL.currentCountry.name);
 
             d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)
+
+            // clear first child
+            if(document.querySelector('#vizBarchart').firstElementChild) {
+                document.querySelector('#vizBarchart').firstElementChild.remove();
+            }
+
             GLOBAL.currentCountry.drawBarchart();
 
             const barchartSection = document.querySelector(that.configMap.linkedElement)
