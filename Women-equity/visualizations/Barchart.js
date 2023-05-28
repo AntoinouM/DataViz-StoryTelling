@@ -20,7 +20,6 @@ class Barchart {
       colorScale: configBarchart.colorScale,
       boundedWidth: configBarchart.boundedWidth || undefined,
       boundedHeight: configBarchart.boundedHeight || undefined,
-      orientationHorizontal: configBarchart.orientationHorizontal || false,
     };
 
     this.configData = {
@@ -119,6 +118,7 @@ class Barchart {
 
   render() {
     const that = this;
+    
 
     // Create the bars
     const bars = that.viz
@@ -162,24 +162,11 @@ class Barchart {
     bars.on('click', function (event) {
 
       that.updateCurrentIndicator(this)
-      that.updateHtml()
+      GLOBAL.currentIndicator.updateHtmlQuestions()
 
     })
   }
 
-  updateHtml() {
-    let entriesarr = Object.entries(GLOBAL.currentIndicator.questions)
-
-    const questionsDiv = document.getElementById('questions')
-    questionsDiv.style.display = 'block';
-
-    let html = `<ul>`
-    for (let i = 0; i < entriesarr.length; i++) {
-      html += `<li>${entriesarr[i][0]}  <b>${entriesarr[i][1]}</b></li>`
-    }
-    html+=`</u>`
-    questionsDiv.innerHTML = html;
-  }
 
   updateCurrentIndicator(sel) {
     GLOBAL.currentIndicator.name = sel.__data__.key;

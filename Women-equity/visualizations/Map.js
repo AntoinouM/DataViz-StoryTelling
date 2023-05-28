@@ -190,43 +190,32 @@ class Map {
     updateCountry(countries) {
         const that = this;
         countries.on('click', function (event, d) {
-
             
-            // reset zoom
-            if (that.zoomLevel >= 1.16) {
-                that.svg.transition()
-                .duration(250)
-                .call(that.zoom.transform, d3.zoomIdentity 
-                   .translate(25, 0))
-            }
+            that.resetZoom(1.16, that)
+            that.updateCountryObject(d, that)
 
-
-            GLOBAL.currentCountry.code = d.country_code;
-            GLOBAL.currentCountry.name = d.properties.geounit;
-
-            // update data
-            GLOBAL.currentCountry.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear, GLOBAL.currentCountry.name);
-
-            d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)
-
+            d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)    
             // show slider
             d3.select('#timeWheel').style('opacity', 1)
-            d3.select('#selected').html(GLOBAL.currentYear)
-
+            d3.select('#selected').html(GLOBAL.currentYear) 
             if (GLOBAL.currentYear === GLOBAL.yearMap.years.min) {
                 d3.select('#prev').text('')
             } else {
                 d3.select('#prev').text(GLOBAL.currentYear - 1)
-            }
-
+            }   
             if (GLOBAL.currentYear === GLOBAL.yearMap.years.max) {
                 d3.select('#next').text('')
             } else {
                 d3.select('#next').text(GLOBAL.currentYear + 1)
+            }   
+            GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart')); 
+
+            // check for indicator
+            if (GLOBAL.currentIndicator.name) {
+                //update questions
             }
 
-            GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'));
-
+            // scroll to barchart
             const barchartSection = document.querySelector(that.configMap.linkedElement)
             setTimeout(function () {
                 barchartSection.scrollIntoView({
@@ -234,9 +223,31 @@ class Map {
                     block: 'start',
                     inline: 'start'
                 });
-            }, 150)
-
+            }, 150) 
         })
+    }
+    updateCountryObject(d, that) {
+            GLOBAL.currentCountry.code = d.country_code;
+            GLOBAL.currentCountry.name = d.properties.geounit;  
+            // update data
+            GLOBAL.currentCountry.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear, GLOBAL.currentCountry.name); 
+    }
+    resetZoom(num, that) {
+        // reset zoom
+        if (num) { 
+            if (that.zoomLevel >= num) {
+                that.svg.transition()
+                .duration(250)
+                .call(that.zoom.transform, d3.zoomIdentity 
+                   .translate(25, 0))
+            }
+        } else {
+            that.svg.transition()
+            .duration(250)
+            .call(that.zoom.transform, d3.zoomIdentity 
+               .translate(25, 0))
+        }
+
     }
 }
 

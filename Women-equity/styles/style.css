@@ -8,7 +8,7 @@
   --color-bg: #282a36;
   --color-bg-sec: #44475a;
   --color-fg: #f8f8f2;
-  --color-seconday: #6272a4;
+  --color-secondary: #6272a4;
   --color-cyan: #8be9fd;
   --color-green: #50fa7b;
   --color-orange: #ffb86c;
@@ -51,7 +51,7 @@ h1 {
   display: none;
   margin-top: 1%;
   width: 55%;
-  border: 1px solid var(--color-seconday);
+  border: 1px solid var(--color-secondary);
   height:fit-content;
   padding: 5px 10px;
   background-color: var(--color-bg-sec);
@@ -59,7 +59,7 @@ h1 {
 
 #return-map, #return-map2 {
   position: absolute;
-  opacity: 0.4;
+  opacity: 0.25;
   top: 0;
   margin-top: 5px;
   left: 50%;

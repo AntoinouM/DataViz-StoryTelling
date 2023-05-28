@@ -72,7 +72,7 @@ async function drawViz() {
 
 
     drawMap(GLOBAL.dataSets);
-    drawBarchart(mergedData);
+    drawBarchart();
 };
 
 function onCLickUpdateAndScroll(elemNameSrc, elemNameTrgt) {
@@ -88,6 +88,8 @@ function onCLickUpdateAndScroll(elemNameSrc, elemNameTrgt) {
             // redraw map
             drawMap(GLOBAL.dataSets);
         }
+
+        d3.select('#questions').style('display', 'none')
 
         document.querySelector(elemNameTrgt).scrollIntoView({
             behavior: 'smooth',
@@ -112,7 +114,7 @@ function scrollTo(objScore, DOMelemTarget) {
     })
 }
 
-function drawBarchart(mergedData) {
+function drawBarchart() {
     // init data object
     const configData = {
         xAxisTicks: 'Region',
@@ -142,8 +144,8 @@ function drawBarchart(mergedData) {
     // *********** TO FIX
     //getMeanIndicatorsGlobal(GLOBAL.dataSets.wbl, GLOBAL.currentYear)
 
-    //barchartHorizontal = new Barchart(configBarchart.region, configData, mergedData)
-    //barchartHorizontal.update()
+    barchartHorizontal = new Barchart(configBarchart.region, configData, GLOBAL.yearMap.data.maxYear)
+    barchartHorizontal.update()
 
 }
 
@@ -213,8 +215,14 @@ function observeYear(DOMelem, config) {
     // Callback function to execute when mutations are observed
     const callback = (mutationList, observer) => {
         // redraw chart
-        GLOBAL.currentCountry.data = transformData(GLOBAL.dataSets.wbl, GLOBAL.dataSets.map, GLOBAL.dataSets.demo, GLOBAL.currentYear, GLOBAL.currentCountry.name);
+        GLOBAL.currentCountry.dataUpdate()
         GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'))
+
+        // update questions
+        if (GLOBAL.currentIndicator.questions) {
+            GLOBAL.currentIndicator.updateHtmlQuestions()
+        }
+
     };
 
     // Create an observer instance linked to the callback function
