@@ -228,11 +228,16 @@ export const AddScrollScore = (elementName, objectScore, maxIndex) => {
             if (objectScore.score > 0) {
                 objectScore.score--;
             } else objectScore.score = 0
-            objectScore.lastDirUp = 1;
+            objectScore.lastDirUp = true;
         } else {
-            if (objectScore.score < maxIndex) objectScore.score++
-            else objectScore.score = maxIndex
-            objectScore.lastDirUp = -1;
+            if (maxIndex) {
+                if (objectScore.score < maxIndex) objectScore.score++
+                else objectScore.score = maxIndex
+            } else {
+                objectScore.score++
+            }
+
+            objectScore.lastDirUp = false;
         }
 
         function checkScrollDirectionIsUp(event) {

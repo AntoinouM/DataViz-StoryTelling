@@ -58,32 +58,59 @@ async function drawViz() {
     // console.log(demographicsData)
     // console.log(mergedData)
 
-    // click on go back
     // on click go back
-    document.querySelector('#return-map').addEventListener('click', event => {
+    onCLickUpdateAndScroll('#return-map', '#map-section')
+    onCLickUpdateAndScroll('#return-map2', '#map-section')
+    onCLickUpdateAndScroll('#goNext', '#backtoback')
+    // Manage scrolling event for barchart year
+    addScrollingEventYear()
+    // Bar chart scroll to next
+    let scrollingBarChart;
+    scrollingBarChart = AddScrollScore('#bar-chart', scrollingBarChart, null)
 
-        const input = d3.select('#yearSlider')
-        const span = d3.select('#rangeValue')
+    //scrollTo(scrollingBarChart, document.querySelector('#backtoback'))
 
-        input.node().value = GLOBAL.currentYear;
-        span.html(GLOBAL.currentYear);
 
-        // redraw map
-        drawMap(GLOBAL.dataSets);
+    drawMap(GLOBAL.dataSets);
+    drawBarchart(mergedData);
+};
 
-        document.querySelector('#map-section').scrollIntoView({
+function onCLickUpdateAndScroll(elemNameSrc, elemNameTrgt) {
+    document.querySelector(elemNameSrc).addEventListener('click', event => {
+
+        if (elemNameTrgt === '#map-section') {
+            const input = d3.select('#yearSlider')
+            const span = d3.select('#rangeValue')
+
+            input.node().value = GLOBAL.currentYear;
+            span.html(GLOBAL.currentYear);
+
+            // redraw map
+            drawMap(GLOBAL.dataSets);
+        }
+
+        document.querySelector(elemNameTrgt).scrollIntoView({
             behavior: 'smooth',
             block: 'start',
             inline: 'start'
         });
     })
+}
 
-    // Manage scrolling event for barchart year
-    addScrollingEventYear()
+function scrollTo(objScore, DOMelemTarget) {
 
-    drawMap(GLOBAL.dataSets);
-    drawBarchart(mergedData);
-};
+    objScore.parent.addEventListener('wheel', function() {
+        if (objScore.score >= 30 || !objScore.lastDirUp) {
+            setTimeout(function () {
+                DOMelemTarget.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                    inline: 'start'
+                });
+            }, 150)
+        }
+    })
+}
 
 function drawBarchart(mergedData) {
     // init data object

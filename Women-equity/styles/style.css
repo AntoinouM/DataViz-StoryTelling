@@ -57,7 +57,7 @@ h1 {
   background-color: var(--color-bg-sec);
 }
 
-#return-map {
+#return-map, #return-map2 {
   position: absolute;
   opacity: 0.4;
   top: 0;
@@ -72,7 +72,21 @@ h1 {
   transition-timing-function: ease-in;
 }
 
-#return-map:hover {
+#goNext {
+  position: absolute;
+  opacity: 0.4;
+  bottom: 2%;
+  margin-top: 5px;
+  right: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition-duration: 0.4s;
+  transition-timing-function: ease-in;
+}
+
+#return-map:hover, #return-map2:hover, #goNext:hover {
   opacity: 1;
   cursor: pointer;
   transition-duration: 0.4s;
@@ -110,12 +124,14 @@ h1 {
   justify-content: center;
 } 
 
+.titleSection {
+  margin-top: 7%;
+}
+
 #titleIntro {
   width: 50%;
   text-align: center;
   margin: 3% 0 0 0;
 }
 
-#titleBarchart {
-  margin-top: 7%;
-}
+
