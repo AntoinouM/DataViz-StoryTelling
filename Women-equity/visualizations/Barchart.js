@@ -161,21 +161,29 @@ class Barchart {
     // on click event
     bars.on('click', function (event) {
 
-      GLOBAL.currentIndicator.name = this.__data__.key;
-      GLOBAL.currentIndicator.questions = (GLOBAL.currentCountry.dataQuestions[GLOBAL.currentIndicator.name])
+      that.updateCurrentIndicator(this)
+      that.updateHtml()
 
-      let entriesarr = Object.entries(GLOBAL.currentIndicator.questions)
-
-      const questionsDiv = document.getElementById('questions')
-      questionsDiv.style.display = 'block';
-
-      let html = `<ul>`
-      for (let i = 0; i < entriesarr.length; i++) {
-        html += `<li>${entriesarr[i][0]}  <b>${entriesarr[i][1]}</b></li>`
-      }
-      html+=`</u>`
-      questionsDiv.innerHTML = html;
     })
+  }
+
+  updateHtml() {
+    let entriesarr = Object.entries(GLOBAL.currentIndicator.questions)
+
+    const questionsDiv = document.getElementById('questions')
+    questionsDiv.style.display = 'block';
+
+    let html = `<ul>`
+    for (let i = 0; i < entriesarr.length; i++) {
+      html += `<li>${entriesarr[i][0]}  <b>${entriesarr[i][1]}</b></li>`
+    }
+    html+=`</u>`
+    questionsDiv.innerHTML = html;
+  }
+
+  updateCurrentIndicator(sel) {
+    GLOBAL.currentIndicator.name = sel.__data__.key;
+    GLOBAL.currentIndicator.questions = (GLOBAL.currentCountry.dataQuestions[GLOBAL.currentIndicator.name])
   }
 }
 

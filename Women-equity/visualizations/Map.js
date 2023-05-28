@@ -143,6 +143,7 @@ class Map {
         // draw map initially
         this.drawMap(that.data, that.viz)
 
+
         that.zoom = d3.zoom()
             .scaleExtent([1, 10]) // scale factor
             .translateExtent([
@@ -151,9 +152,11 @@ class Map {
             ])
             .on('zoom', function (event) {
                 that.viz.attr('transform', event.transform)
+                that.zoomLevel = event.transform.k
             });
 
         // Call the zoom on the next parent element of your 'to be zoomed' selection
+
         that.svg.call(that.zoom);
     }
 
@@ -187,10 +190,16 @@ class Map {
     updateCountry(countries) {
         const that = this;
         countries.on('click', function (event, d) {
+
+            
             // reset zoom
-            that.svg.transition()
-                .duration(350)
-                .call(that.zoom.transform, d3.zoomIdentity);
+            if (that.zoomLevel >= 1.16) {
+                that.svg.transition()
+                .duration(250)
+                .call(that.zoom.transform, d3.zoomIdentity 
+                   .translate(25, 0))
+            }
+
 
             GLOBAL.currentCountry.code = d.country_code;
             GLOBAL.currentCountry.name = d.properties.geounit;
