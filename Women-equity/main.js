@@ -54,6 +54,8 @@ async function drawViz() {
     mergedData = transformData(wblData, worldData, demographicsData, GLOBAL.currentYear);
     GLOBAL.yearMap = GetEvolutionSpeed(wblData)
 
+    visualizeTotalNumber(demographicsData, wblData);
+
     // console.log(worldData)
     // console.log(demographicsData)
     // console.log(mergedData)
@@ -74,6 +76,8 @@ async function drawViz() {
     drawMap(GLOBAL.dataSets);
     drawBarchart();
 };
+
+
 
 function onCLickUpdateAndScroll(elemNameSrc, elemNameTrgt) {
     document.querySelector(elemNameSrc).addEventListener('click', event => {
@@ -113,6 +117,31 @@ function scrollTo(objScore, DOMelemTarget) {
         }
     })
 }
+
+function visualizeTotalNumber(demographicsData, wblData) {
+    // Filter the questions data for the year 2023 and the specified question
+    const filteredQuestions = wblData.filter(function(data) {
+      return data["Can a woman work in an industrial job in the same way as a man??"] === "No" && data["Report_Year"] === "2020";
+    });
+  
+  
+    // Get the list of countries with "No" answer to the question
+    const countriesWithAnswerNo = filteredQuestions.map(function(data) {
+      return data["Economy_Code"];
+    });
+  
+    // Filter the population data for female population in the specified countries
+    const filteredPopulation = demographicsData.filter(function(data) {
+      return countriesWithAnswerNo.includes(data["Country_Code"]) && data["Indicator Name"] === "Population, female";
+    });
+  
+    // Calculate the total female population in the specified countries
+    const totalFemalePopulation = filteredPopulation.reduce(function(total, data) {
+      return total + parseFloat(data["2020"]);
+    }, 0);
+  
+    console.log("Total female population in countries with 'No' answer:", totalFemalePopulation);
+  }
 
 function drawBarchart() {
     // init data object
