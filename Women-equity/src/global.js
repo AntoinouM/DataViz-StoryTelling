@@ -7,17 +7,15 @@ const GLOBAL = {
     currentIndicator: {
         name: 'mobility',
         questions: undefined,
-        updateHtmlQuestions: function() {
+        updateHtmlQuestions: function(DOM) {
             let entriesarr = Object.entries(GLOBAL.currentIndicator.questions)
-            
-            const questionsDiv = document.getElementById('questions')
-            questionsDiv.style.display = 'block'
+
             let html = `<ul>`
             for (let i = 0; i < entriesarr.length; i++) {
               html += `<li>${entriesarr[i][0]}  <b>${entriesarr[i][1]}</b></li>`
             }
             html+=`</u>`
-            questionsDiv.innerHTML = html;
+            DOM.innerHTML = html;
           }
     },
     currentCountry : {
@@ -25,7 +23,7 @@ const GLOBAL = {
         name: undefined,
         data: undefined,
         dataUpdate: function () {
-            GLOBAL.currentCountry.data = transformData(GLOBAL.dataSets.wbl, GLOBAL.dataSets.map, GLOBAL.dataSets.demo, GLOBAL.currentYear, GLOBAL.currentCountry.name)
+            this.data = transformData(GLOBAL.dataSets.wbl, GLOBAL.dataSets.map, GLOBAL.dataSets.demo, GLOBAL.currentYear, GLOBAL.currentCountry.name)
         },
         dataBarchart: [],
         dataQuestions: undefined,
@@ -33,6 +31,8 @@ const GLOBAL = {
         dataSets: undefined,
         drawBarchart: function(DOMelem) {    
             this.dataBarchart = []
+            
+            // create a barchart specific data object
             for (const [key, value] of Object.entries(this.data[0].scoring.indicators)) {
                 this.dataBarchart.push({'key': key, 'val': value})
             }
@@ -48,7 +48,7 @@ const GLOBAL = {
                     y: 'val',
                 }
             }
-            //this.dataBarchart = Array.from(this.data[0].scoring.indicators);
+
             this.dataQuestions = this.data[0].questions;
 
             // clear first child
@@ -60,6 +60,20 @@ const GLOBAL = {
             barchart.update();
         }
     },
+    updateSliderElement: function(d3) {
+        d3.select('#selected').html(GLOBAL.currentYear) 
+
+        if (GLOBAL.currentYear === GLOBAL.yearMap.years.min) {
+            d3.select('#prev').text('')
+        } else {
+            d3.select('#prev').text(GLOBAL.currentYear - 1)
+        }   
+        if (GLOBAL.currentYear === GLOBAL.yearMap.years.max) {
+            d3.select('#next').text('')
+        } else {
+            d3.select('#next').text(GLOBAL.currentYear + 1)
+        }   
+    }
 }
 
 export {GLOBAL}
