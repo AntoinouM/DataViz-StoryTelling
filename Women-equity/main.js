@@ -149,6 +149,41 @@ function visualizeTotalNumber(demographicsData, wblData) {
 }
 
 function drawBarchart() {
+    // init data object
+    const configData = {
+        xAxisTicks: 'Region',
+        yAxisTicks: '%',
+        maxValue: 100,
+        bandArray: [],
+        dataAccessors: {
+            color: 'key',
+            x: 'key',
+            y: 'val',
+        }
+    }
+
+    GLOBAL.yearMap.data.maxYear.forEach(element => {
+        configData.bandArray.push(element.key)
+    })
+    configData.bandArray.sort();
+
+    // reorder datasets from yearMap
+    GLOBAL.yearMap.data.maxYear = GLOBAL.yearMap.data.maxYear.sort((a, b) => {
+        return configData.bandArray.indexOf(a.key) - configData.bandArray.indexOf(b.key)
+    })
+    GLOBAL.yearMap.data.minYear = GLOBAL.yearMap.data.minYear.sort((a, b) => {
+        return configData.bandArray.indexOf(a.key) - configData.bandArray.indexOf(b.key)
+    })
+
+    // *** TO FIX
+    //getMeanIndicatorsGlobal(GLOBAL.dataSets.wbl, GLOBAL.currentYear)
+
+    barchartHorizontal = new Barchart(configBarchart.region, configData, GLOBAL.yearMap.data.maxYear)
+    barchartHorizontal.update()
+
+}
+
+
 function drawBackToBack() {
     // init data object
     const configData = {
@@ -217,9 +252,9 @@ function drawMap(dataSets) {
     configMap.boundedWidth = configMap.width - configMap.margin.left - configMap.margin.right;
     configMap.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
 
-    // Set the dimensions of the map container
-    configMap.width = 800; // Specify the desired width
-    configMap.height = 500; // Specify the desired height
+    // // Set the dimensions of the map container
+    // configMap.width = 800; // Specify the desired width
+    // configMap.height = 500; // Specify the desired height
 
     // Create the map object
     map = new Map(configMap, configData, dataSets, GLOBAL.currentYear);
@@ -283,4 +318,4 @@ function observeYear(DOMelem, config) {
     observer.observe(DOMelem, config);
 }
 
-drawViz();
+drawViz()

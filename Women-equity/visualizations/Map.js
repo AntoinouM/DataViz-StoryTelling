@@ -15,7 +15,7 @@ class Map {
         this.configMap = {
             parentElement: configMap.parentElement || 'body',
             linkedElement: configMap.linkedElement || '#bar-chart',
-            width: configMap.width || window.innerWidth * 0.75,
+            width: configMap.width || window.innerWidth * 0.8,
             height: configMap.height || window.innerHeight * 0.65,
             margin: configMap.margin || {
                 top: 20,

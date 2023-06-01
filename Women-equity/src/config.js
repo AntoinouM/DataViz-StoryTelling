@@ -15,7 +15,7 @@ const colors = {
 const configMap = {
     parentElement: '#vizMap',
     linkedElement: '#bar-chart',
-    width: window.innerWidth * 0.8,
+    width: window.innerWidth * 0.65,
     height: window.innerHeight * 0.65,
     margin: {
         top: 20,
