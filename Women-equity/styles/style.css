@@ -45,6 +45,7 @@ section {
 
 h1 {
   font-size: 2em;
+  color:  var(--color-purple);
 }
 
 #questions {
