@@ -105,7 +105,7 @@ function onCLickUpdateAndScroll(elemNameSrc, elemNameTrgt) {
 
 function scrollTo(objScore, DOMelemTarget) {
 
-    objScore.parent.addEventListener('wheel', function() {
+    objScore.parent.addEventListener('wheel', function () {
         if (objScore.score >= 30 || !objScore.lastDirUp) {
             setTimeout(function () {
                 DOMelemTarget.scrollIntoView({
@@ -120,28 +120,30 @@ function scrollTo(objScore, DOMelemTarget) {
 
 function visualizeTotalNumber(demographicsData, wblData) {
     // Filter the questions data for the year 2023 and the specified question
-    const filteredQuestions = wblData.filter(function(data) {
-      return data["Can a woman work in an industrial job in the same way as a man??"] === "No" && data["Report_Year"] === "2020";
+    const filteredQuestions = wblData.filter(function (data) {
+        return data["Can a woman work in an industrial job in the same way as a man?"] === "No" && data["Report_Year"] === "2020";
     });
-  
-  
+
+
     // Get the list of countries with "No" answer to the question
-    const countriesWithAnswerNo = filteredQuestions.map(function(data) {
-      return data["Economy_Code"];
+    const countriesWithAnswerNo = filteredQuestions.map(function (data) {
+        return data["Economy_Code"];
     });
-  
+
     // Filter the population data for female population in the specified countries
-    const filteredPopulation = demographicsData.filter(function(data) {
-      return countriesWithAnswerNo.includes(data["Country_Code"]) && data["Indicator Name"] === "Population, female";
+    const filteredPopulation = demographicsData.filter(function (data) {
+        return countriesWithAnswerNo.includes(data["Country_Code"]) && data["Indicator Name"] === "Population, female";
     });
-  
+
     // Calculate the total female population in the specified countries
-    const totalFemalePopulation = filteredPopulation.reduce(function(total, data) {
-      return total + parseFloat(data["2020"]);
+    const totalFemalePopulation = filteredPopulation.reduce(function (total, data) {
+        return total + parseFloat(data["2020"]);
     }, 0);
-  
-    console.log("Total female population in countries with 'No' answer:", totalFemalePopulation);
-  }
+
+    // Set the value to the <h1> tag with id "totalNumber"
+    const totalNumberElement = document.getElementById("totalNumber");
+    totalNumberElement.innerText = totalFemalePopulation;
+}
 
 function drawBarchart() {
     // init data object
@@ -200,8 +202,14 @@ function drawMap(dataSets) {
     configMap.boundedWidth = configMap.width - configMap.margin.left - configMap.margin.right;
     configMap.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
 
-    //configData.dataAccessors.color = null;
-    map = new Map(configMap, configData, dataSets, GLOBAL.currentYear)
+    // Set the dimensions of the map container
+    configMap.width = 800; // Specify the desired width
+    configMap.height = 500; // Specify the desired height
+
+    // Create the map object
+    map = new Map(configMap, configData, dataSets, GLOBAL.currentYear);
+
+    // Draw the map
     map.updateMap();
 }
 
@@ -217,7 +225,7 @@ function addScrollingEventYear() {
     barChartSliderScore.score = years.indexOf(GLOBAL.currentYear)
 
     // set Mutable Observer
-    observeYear(document.getElementById('selected'), {attributes: true, childList: true, subtree: true})
+    observeYear(document.getElementById('selected'), { attributes: true, childList: true, subtree: true })
 
     function modifyYearOnScroll(event) {
         const selected = d3.select('#selected')
