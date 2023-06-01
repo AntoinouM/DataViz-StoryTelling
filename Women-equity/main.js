@@ -5,10 +5,11 @@ import {
 } from './src/global.js';
 import Map from './visualizations/Map'
 import Barchart from './visualizations/Barchart';
+import BacktoBack from './visualizations/BacktoBack';
 import {
     transformData,
     AddScrollScore,
-    GetEvolutionSpeed,
+    generateYearMap,
     getMeanIndicatorsGlobal
 } from './src/util.js';
 import {
@@ -44,15 +45,17 @@ async function drawViz() {
     const worldData = await d3.json('./data/world.geo.json');
     const demographicsData = await d3.csv('./data/SP.POP.TOTL.FE.csv')
     const wblData = await d3.dsv(";", "./data/WBL-panel.csv")
+    const gdpData = await d3.csv('./data/API_NY.GDP.MKTP.CD_DS2_en_csv_v2_5454986.csv')
 
     GLOBAL.dataSets = {
         'wbl': wblData,
         'map': worldData,
         'demo': demographicsData,
+        'gdp': gdpData,
     }
 
-    mergedData = transformData(wblData, worldData, demographicsData, GLOBAL.currentYear);
-    GLOBAL.yearMap = GetEvolutionSpeed(wblData)
+    mergedData = transformData(GLOBAL.dataSets, GLOBAL.currentYear);
+    GLOBAL.yearMap = generateYearMap(wblData)
 
     // console.log(worldData)
     // console.log(demographicsData)
@@ -72,7 +75,7 @@ async function drawViz() {
 
 
     drawMap(GLOBAL.dataSets);
-    drawBarchart();
+    //drawBackToBack();
 };
 
 function onCLickUpdateAndScroll(elemNameSrc, elemNameTrgt) {
@@ -114,17 +117,29 @@ function scrollTo(objScore, DOMelemTarget) {
     })
 }
 
-function drawBarchart() {
+function drawBackToBack() {
     // init data object
     const configData = {
-        xAxisTicks: 'Region',
-        yAxisTicks: '%',
-        maxValue: 100,
         bandArray: [],
-        dataAccessors: {
-            color: 'key',
-            x: 'key',
-            y: 'val',
+        leftPart: {
+            yAxisTicks: 'Region',
+            yAxisTicks: '%',
+            maxValue: 100,
+            dataAccessors: {
+                color: 'key',
+                x: 'val',
+                y: 'key',
+            }
+        },
+        rightPart: {
+            yAxisTicks: 'Region',
+            yAxisTicks: 'Remaining years',
+            maxValue: 100,
+            dataAccessors: {
+                color: 'remainingTime.key',
+                x: 'remainingTime.val',
+                y: 'remainingTime.key',
+            }
         }
     }
 
@@ -144,9 +159,8 @@ function drawBarchart() {
     // *********** TO FIX
     //getMeanIndicatorsGlobal(GLOBAL.dataSets.wbl, GLOBAL.currentYear)
 
-    barchartHorizontal = new Barchart(configBarchart.region, configData, GLOBAL.yearMap.data.maxYear)
+    barchartHorizontal = new BacktoBack(configBarchart.region, configData, GLOBAL.yearMap.data.maxYear)
     barchartHorizontal.update()
-
 }
 
 function drawMap(dataSets) {
@@ -220,7 +234,7 @@ function observeYear(DOMelem, config) {
 
         // update questions
         if (GLOBAL.currentIndicator.questions) {
-            GLOBAL.currentIndicator.updateHtmlQuestions()
+            GLOBAL.currentIndicator.updateHtmlQuestions(document.querySelector('#questions'))
         }
 
     };

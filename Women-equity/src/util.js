@@ -40,7 +40,7 @@ import {
 
 }
 
-export const GetEvolutionSpeed = (wblData) => {
+export const generateYearMap = (wblData) => {
 
     wblData = wblData.map((rows) => {
         return {
@@ -105,9 +105,9 @@ export const GetEvolutionSpeed = (wblData) => {
     return yearMap;
 }
 
-export const transformData = (wblData, worldData, demographicData, year, country) => { // we use liodash to simplify the code {vanilla: filter both array then merge}, lodash work with sequence like d3 works with select
+export const transformData = (dataSets, year, country) => { 
 
-    const mappedWBL = wblData.map((rows) => {
+    const mappedWBL = dataSets.wbl.map((rows) => {
         return {
             scoring: {
                 economy: rows['Economy'],
@@ -189,17 +189,24 @@ export const transformData = (wblData, worldData, demographicData, year, country
     })
 
     const filteredData = mappedWBL.filter((e) => +e.scoring.report_year === year);
-    const filteredDemographics = demographicData.map(d => {
+    const filteredDemographics = dataSets.demo.map(d => {
         return {
             country_code: d['Country_Code'],
             women_population: d[`${year}`]
         }
     })
+    const filteredGDP = dataSets.gdp.map(d => {
+        return {
+            country_code: d['Country Code'],
+            gdp: d[`${year}`]
+        }
+    })
 
     let mergedData = _(filteredData) // start sequence (start with this array)
         .keyBy('scoring.iso_code') // Create a dictionary (TKey, TValue) of the first array
-        .merge(_.keyBy(worldData.features, 'properties.iso_a3')) // Create a dictionary of the second array and merge it to the first one
+        .merge(_.keyBy(dataSets.map.features, 'properties.iso_a3')) // Create a dictionary of the second array and merge it to the first one
         .merge(_.keyBy(filteredDemographics, 'country_code'))
+        .merge(_.keyBy(filteredGDP, 'country_code'))
         .values() // convert the combined dictionaries to an array again
         .value() // get the value (array) of the sequence that is returned by lodash
 

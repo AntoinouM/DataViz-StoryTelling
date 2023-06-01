@@ -6,6 +6,7 @@ import {
 class Barchart {
   constructor(configBarchart, configData, data) {
     this.data = data
+
     this.configBarchart = {
       parentElement: configBarchart.parentElement || '#vizBarchart',
       width: configBarchart.width || window.innerWidth * 0.7,
@@ -83,12 +84,6 @@ class Barchart {
       .attr("transform", `translate(0, ${that.configBarchart.boundedHeight})`);
 
     that.yAxisG = that.viz.append("g").attr("class", "axis y-axis");
-
-    if (!that.configBarchart.orientationHorizontal) {
-
-      // switch the axis around
-    }
-
   }
 
   update() {
@@ -161,8 +156,11 @@ class Barchart {
     // on click event
     bars.on('click', function (event) {
 
+      const questionsDiv = document.querySelector('#questions')
+
       that.updateCurrentIndicator(this)
-      GLOBAL.currentIndicator.updateHtmlQuestions()
+      GLOBAL.currentIndicator.updateHtmlQuestions(questionsDiv)
+      questionsDiv.style.display = 'block'
 
     })
   }

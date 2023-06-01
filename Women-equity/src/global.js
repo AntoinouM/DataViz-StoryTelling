@@ -23,12 +23,11 @@ const GLOBAL = {
         name: undefined,
         data: undefined,
         dataUpdate: function () {
-            this.data = transformData(GLOBAL.dataSets.wbl, GLOBAL.dataSets.map, GLOBAL.dataSets.demo, GLOBAL.currentYear, GLOBAL.currentCountry.name)
+            this.data = transformData(GLOBAL.dataSets, GLOBAL.currentYear, GLOBAL.currentCountry.name)
         },
         dataBarchart: [],
         dataQuestions: undefined,
         currentYear: undefined,
-        dataSets: undefined,
         drawBarchart: function(DOMelem) {    
             this.dataBarchart = []
             

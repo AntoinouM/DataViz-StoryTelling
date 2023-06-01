@@ -48,7 +48,7 @@ const configBarchart = {
     country: {
         parentElement: '#vizBarchart',
         width: window.innerWidth * 0.5,
-        height: window.innerHeight * 0.5,
+        height: window.innerHeight * 0.4,
         margin: {
             top: 20,
             right: 35,
@@ -62,6 +62,28 @@ const configBarchart = {
         orientationHorizontal: false,
     }
 
+}
+
+const configBackToBack = {
+    parentElement: '#vizBacktoBack',
+    width: window.innerWidth * 0.75,
+    height: window.innerHeight * 0.5,
+    margin: {
+        top: 20,
+        right: 35,
+        bottom: 35,
+        left: 20
+    },
+    colors: colors,
+    colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
+    boundedWidth: undefined,
+    boundedHeight: undefined,
+    leftPart: {
+
+    },
+    rightPart: {
+
+    },
 }
 
 

@@ -51,6 +51,7 @@ class Map {
 
         that.data;
 
+        // check if a slider is attached to the configuration
         if (that.configData.sliderGetter !== null) {
             that.slider = {
                 'input': d3.select(that.configData.sliderGetter.input),
@@ -60,10 +61,10 @@ class Map {
             that.slider.span.html(that.currentYear)
         }
 
-        that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
+        // transform the data and attach it to the instance
+        that.data = transformData(that.dataSets, that.currentYear);
 
         /* **** SETUP ****/
-
         // inner bounds
         that.boundedWidth = that.configMap.width - that.configMap.margin.left - that.configMap.margin.right;
         that.boundedHeight = that.configMap.height - that.configMap.margin.top - that.configMap.margin.bottom;
@@ -95,6 +96,7 @@ class Map {
     updateMap() {
         const that = this;
 
+        // define what data is responsible for the color change
         that.colorAccessor = d => d[that.configData.dataAccessors.color];
 
         // domain
@@ -102,48 +104,15 @@ class Map {
 
         // slider update
         if (that.configData.sliderGetter !== null) {
-            that.slider.input.on('input', function () {
-                that.currentYear = +this.value
-                GLOBAL.currentYear = +this.value
-                that.slider.span.html(+this.value)
-
-                that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
-                that.drawMap(that.data, that.viz)
-            })
+            this.updateDOMandDataOnSliderChange(that)
         }
-
-        // play btn
-        let play_interval = null;
-
-        that.slider.btn.on('click', function () {
-            if (play_interval === null) {
-                that.slider.btn.html('||')
-
-                // start the interval
-                play_interval = setInterval(function () {
-                    if (that.currentYear < that.configData.maxYear) {
-                        that.currentYear += 1;
-                    } else {
-                        that.currentYear -= that.configData.maxYear - that.configData.minYear
-                    }
-
-                    that.slider.input.node().value = that.currentYear;
-                    GLOBAL.currentYear = that.currentYear
-                    that.slider.span.html(that.currentYear);
-                    that.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear);
-                    that.drawMap(that.data, that.viz)
-                }, 70);
-            } else {
-                that.slider.btn.html('▶');
-                clearInterval(play_interval);
-                play_interval = null;
-            }
-        });
+        // add play btn interaction
+        this.addPlayBtnInteraction(that)
 
         // draw map initially
         this.drawMap(that.data, that.viz)
 
-
+        // define zoom and pan
         that.zoom = d3.zoom()
             .scaleExtent([1, 10]) // scale factor
             .translateExtent([
@@ -156,7 +125,6 @@ class Map {
             });
 
         // Call the zoom on the next parent element of your 'to be zoomed' selection
-
         that.svg.call(that.zoom);
     }
 
@@ -183,31 +151,25 @@ class Map {
                     }
                 }
             })
-        this.updateCountry(countries)
+        this.drawBarchartOnClick(countries)
     }
 
 
-    updateCountry(countries) {
+    drawBarchartOnClick(countries) {
         const that = this;
         countries.on('click', function (event, d) {
             
+            // onclick reset zoom of map
             that.resetZoom(1.16, that)
             that.updateCountryObject(d, that)
 
+            // update barCharttitle
             d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)    
-            // show slider
+            // show slider and update value
             d3.select('#timeWheel').style('opacity', 1)
-            d3.select('#selected').html(GLOBAL.currentYear) 
-            if (GLOBAL.currentYear === GLOBAL.yearMap.years.min) {
-                d3.select('#prev').text('')
-            } else {
-                d3.select('#prev').text(GLOBAL.currentYear - 1)
-            }   
-            if (GLOBAL.currentYear === GLOBAL.yearMap.years.max) {
-                d3.select('#next').text('')
-            } else {
-                d3.select('#next').text(GLOBAL.currentYear + 1)
-            }   
+            GLOBAL.updateSliderElement(d3)
+
+            // draw barchart
             GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart')); 
 
             // check for indicator
@@ -230,7 +192,7 @@ class Map {
             GLOBAL.currentCountry.code = d.country_code;
             GLOBAL.currentCountry.name = d.properties.geounit;  
             // update data
-            GLOBAL.currentCountry.data = transformData(that.dataSets.wbl, that.dataSets.map, that.dataSets.demo, that.currentYear, GLOBAL.currentCountry.name); 
+            GLOBAL.currentCountry.data = transformData(that.dataSets, that.currentYear, GLOBAL.currentCountry.name); 
     }
     resetZoom(num, that) {
         // reset zoom
@@ -248,6 +210,45 @@ class Map {
                .translate(25, 0))
         }
 
+    }
+    updateDOMandDataOnSliderChange(that) {
+        that.slider.input.on('input', function () {
+            that.currentYear = +this.value
+            GLOBAL.currentYear = +this.value
+            that.slider.span.html(+this.value)
+
+            that.data = transformData(that.dataSets, that.currentYear);
+            that.drawMap(that.data, that.viz)
+        })
+    }
+    addPlayBtnInteraction(that) {
+        // play btn
+        let play_interval = null;
+
+        that.slider.btn.on('click', function () {
+            if (play_interval === null) {
+                that.slider.btn.html('||')
+
+                // start the interval
+                play_interval = setInterval(function () {
+                    if (that.currentYear < that.configData.maxYear) {
+                        that.currentYear += 1;
+                    } else {
+                        that.currentYear -= that.configData.maxYear - that.configData.minYear
+                    }
+
+                    that.slider.input.node().value = that.currentYear;
+                    GLOBAL.currentYear = that.currentYear
+                    that.slider.span.html(that.currentYear);
+                    that.data = transformData(that.dataSets, that.currentYear);
+                    that.drawMap(that.data, that.viz)
+                }, 70);
+            } else {
+                that.slider.btn.html('▶');
+                clearInterval(play_interval);
+                play_interval = null;
+            }
+        });
     }
 }
 
