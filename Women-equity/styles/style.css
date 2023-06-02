@@ -48,6 +48,28 @@ h1 {
   color:  var(--color-purple);
 }
 
+#mapBackgroundContainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+}
+#mapBackgroundContainer h1{
+  font-size: 3.8em;
+}
+
+#mapBackgroundContainer p{
+  font-size: 1.7em;
+}
+
+.scrollContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
 #questions {
   display: none;
   margin-top: 1%;

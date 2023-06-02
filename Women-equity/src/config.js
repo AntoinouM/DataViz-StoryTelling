@@ -26,6 +26,43 @@ const configMap = {
     colors: colors,
     boundedWidth: undefined,
     boundedHeight: undefined,
+    clickable: true
+}
+
+const configYesNoMap = {
+    parentElement: '#yesNoMap',
+    linkedElement: '#bar-chart',
+    width: window.innerWidth * 0.65,
+    height: window.innerHeight * 0.65,
+    margin: {
+        top: 20,
+        right: 20,
+        bottom: 35,
+        left: 35
+    },
+    colors: colors,
+    colorScale: ['#50fa7b', '#ff5555'],
+    boundedWidth: undefined,
+    boundedHeight: undefined,
+    clickable: false
+}
+
+const backgroundMap = {
+    parentElement: '#backgroundMap',
+    linkedElement: '#yesNoMap',
+    width: window.innerWidth * 0.65,
+    height: window.innerHeight * 0.65,
+    margin: {
+        top: 20,
+        right: 20,
+        bottom: 35,
+        left: 35
+    },
+    colors: colors,
+    colorScale: false,
+    boundedWidth: undefined,
+    boundedHeight: undefined,
+    clickable: false
 }
 
 const configBarchart = {
@@ -87,4 +124,4 @@ const configBackToBack = {
 }
 
 
-export { configMap, configBarchart, colors }
+export { configMap, configYesNoMap, configBarchart, colors }

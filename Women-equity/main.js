@@ -1,3 +1,4 @@
+
 import './styles/style.css';
 import * as d3 from 'd3';
 import {
@@ -14,6 +15,7 @@ import {
 } from './src/util.js';
 import {
     configMap,
+    configYesNoMap,
     configBarchart,
     colors
 } from './src/config.js'
@@ -22,7 +24,7 @@ import {
 } from 'lodash';
 
 // WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#map-section').scrollIntoView({
+document.querySelector('#intro').scrollIntoView({
     behavior: 'smooth',
     block: 'start',
     inline: 'start'
@@ -56,6 +58,7 @@ async function drawViz() {
 
     mergedData = transformData(GLOBAL.dataSets, GLOBAL.currentYear);
     GLOBAL.yearMap = generateYearMap(wblData)
+    drawBackgroundMap(GLOBAL.dataSets);
 
     visualizeTotalNumber(demographicsData, wblData);
 
@@ -64,8 +67,10 @@ async function drawViz() {
     // console.log(mergedData)
 
     // on click go back
+    onCLickUpdateAndScroll('#goMapFirst', '#yesNoMapSection')
+    onCLickUpdateAndScroll('#yesNoMapSection', '#map-section')
     onCLickUpdateAndScroll('#return-map', '#map-section')
-    onCLickUpdateAndScroll('#return-map2', '#map-section')
+    onCLickUpdateAndScroll('#return-map2', '#intro')
     onCLickUpdateAndScroll('#goNext', '#backtoback')
     // Manage scrolling event for barchart year
     addScrollingEventYear()
@@ -143,9 +148,33 @@ function visualizeTotalNumber(demographicsData, wblData) {
         return total + parseFloat(data["2020"]);
     }, 0);
 
-    // Set the value to the <h1> tag with id "totalNumber"
     const totalNumberElement = document.getElementById("totalNumber");
-    totalNumberElement.innerText = totalFemalePopulation;
+
+    /**
+     * ANIMATION
+     */
+
+    // Set the initial value to 0
+    let currentValue = 0;
+
+    // Define the increment step and interval duration (in milliseconds)
+    const increment = Math.ceil(totalFemalePopulation / 1000); 
+    const intervalDuration = 20; 
+
+    // Define the interval function
+    const incrementValue = () => {
+        currentValue += increment;
+        if (currentValue >= totalFemalePopulation) {
+            // Ensure the final value is displayed without exceeding the total
+            totalNumberElement.innerText = totalFemalePopulation.toLocaleString();
+            clearInterval(interval);
+        } else {
+            totalNumberElement.innerText = currentValue.toLocaleString();
+        }
+    };
+
+    // Start the animation
+    const interval = setInterval(incrementValue, intervalDuration);
 }
 
 function drawBarchart() {
@@ -239,7 +268,8 @@ function drawMap(dataSets) {
         minIndex: Math.floor(d3.min(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))),
         maxIndex: Math.ceil(d3.max(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))),
         dataAccessors: {
-            color: 'scoring.wbl_index'
+            paramToCheck: 'scoring',
+            color: 'wbl_index'
         },
         sliderGetter: {
             'input': '#yearSlider',
@@ -248,19 +278,28 @@ function drawMap(dataSets) {
         }
     }
 
-    /* [2] ===== CHART DIMENSION ===== */
-    configMap.boundedWidth = configMap.width - configMap.margin.left - configMap.margin.right;
-    configMap.boundedHeight = configMap.height - configMap.margin.top - configMap.margin.bottom;
-
-    // // Set the dimensions of the map container
-    // configMap.width = 800; // Specify the desired width
-    // configMap.height = 500; // Specify the desired height
-
     // Create the map object
     map = new Map(configMap, configData, dataSets, GLOBAL.currentYear);
 
     // Draw the map
     map.updateMap();
+}
+
+function drawBackgroundMap(dataSets) {
+    const configData = {
+        minIndex: 'Yes',
+        maxIndex: 'No',
+        dataAccessors: {
+            paramToCheck: 'questions',
+            color: "pay['Can a woman work in an industrial job in the same way as a man?']"
+        },
+        sliderGetter: null,
+    }
+
+    // Create the map object
+    map = new Map(configYesNoMap, configData, dataSets, 2021);
+    map.updateMap();
+
 }
 
 function addScrollingEventYear() {

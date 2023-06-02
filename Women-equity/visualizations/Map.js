@@ -7,9 +7,9 @@ import {
 } from '../src/global.js';
 
 class Map {
-    constructor(configMap, configData, dataSets, currentYear) {
+    constructor(configMap, configData, dataSets, year) {
         this.dataSets = dataSets;
-        this.currentYear = currentYear;
+        this.currentYear = year;
 
         // configurate objects with default
         this.configMap = {
@@ -29,6 +29,7 @@ class Map {
             },
             //colorScale: configMap.colorScale || [ '#bca0dc', '#b491c8', '#7c5295', '#663a82', '#52307c', '#3c1361'],
             colorScale: configMap.colorScale || ['#bca0dc', '#663a82', '#3c1361'],
+            clickable: configMap.clickable || false
         }
 
         this.configData = {
@@ -38,6 +39,7 @@ class Map {
             minWBLIndex: configData.minIndex || 0,
             maxWBLIndex: configData.maxIndex || 100,
             dataAccessors: configData.dataAccessors || {
+                paramToCheck: 'scoring',
                 color: 'scoring.wbl_index'
             },
             sliderGetter: configData.sliderGetter || null
@@ -97,7 +99,7 @@ class Map {
         const that = this;
 
         // define what data is responsible for the color change
-        that.colorAccessor = d => d[that.configData.dataAccessors.color];
+        that.colorAccessor = d => d[that.configData.dataAccessors.paramToCheck][that.configData.dataAccessors.color]
 
         // domain
         that.colorScale.domain([that.configData.minWBLIndex, that.configData.maxWBLIndex])
@@ -105,72 +107,77 @@ class Map {
         // slider update
         if (that.configData.sliderGetter !== null) {
             this.updateDOMandDataOnSliderChange(that)
+            // add play btn interaction
+            this.addPlayBtnInteraction(that)
         }
-        // add play btn interaction
-        this.addPlayBtnInteraction(that)
-
         // draw map initially
         this.drawMap(that.data, that.viz)
+        if (that.configMap.clickable) {
+            // define zoom and pan
+            that.zoom = d3.zoom()
+                .scaleExtent([1, 10]) // scale factor
+                .translateExtent([
+                    [-300, -300], // x0 and y0
+                    [1500, 1000] // x1 and y1
+                ])
+                .on('zoom', function (event) {
+                    that.viz.attr('transform', event.transform)
+                    that.zoomLevel = event.transform.k
+                });
 
-        // define zoom and pan
-        that.zoom = d3.zoom()
-            .scaleExtent([1, 10]) // scale factor
-            .translateExtent([
-                [-300, -300], // x0 and y0
-                [1500, 1000] // x1 and y1
-            ])
-            .on('zoom', function (event) {
-                that.viz.attr('transform', event.transform)
-                that.zoomLevel = event.transform.k
-            });
+            // Call the zoom on the next parent element of your 'to be zoomed' selection
+            that.svg.call(that.zoom);
+        }
 
-        // Call the zoom on the next parent element of your 'to be zoomed' selection
-        that.svg.call(that.zoom);
+
     }
 
     drawMap(data, sel) {
         const that = this;
-
         const countries = sel
             .selectAll('path')
             .data(data)
             .join('path')
             .attr('d', that.path)
             .attr('class', 'country')
-            .style('fill', that.configMap.colors.bg)
             .style('stroke', that.configMap.colors.fg)
             .style('fill', (d) => {
                 if (that.configData.dataAccessors.color === null) {
                     return that.configMap.colors.bg
                 } else {
                     //if (d.scoring === undefined) console.log(d)
-                    if (d.scoring !== undefined) {
-                        return that.colorScale(d.scoring.wbl_index)
+                    if (d[that.configData.dataAccessors.paramToCheck] !== undefined) {
+                        // console.log(d.questions.pay['Can a woman work in an industrial job in the same way as a man?'])
+                        console.log(that.colorScale(that.colorAccessor(d)))
+                        return that.colorScale(that.colorAccessor(d))
                     } else {
                         return that.configMap.colors.bg
                     }
                 }
             })
-        this.drawBarchartOnClick(countries)
+        if (that.configMap.clickable) {
+            this.drawBarchartOnClick(countries)
+        }
+
     }
 
 
     drawBarchartOnClick(countries) {
         const that = this;
         countries.on('click', function (event, d) {
-            
+
             // onclick reset zoom of map
             that.resetZoom(1.16, that)
             that.updateCountryObject(d, that)
 
             // update barCharttitle
-            d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)    
+            d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)
             // show slider and update value
             d3.select('#timeWheel').style('opacity', 1)
             GLOBAL.updateSliderElement(d3)
 
             // draw barchart
-            GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart')); 
+            GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'));
 
             // check for indicator
             if (GLOBAL.currentIndicator.name) {
@@ -185,29 +192,29 @@ class Map {
                     block: 'start',
                     inline: 'start'
                 });
-            }, 150) 
+            }, 150)
         })
     }
     updateCountryObject(d, that) {
-            GLOBAL.currentCountry.code = d.country_code;
-            GLOBAL.currentCountry.name = d.properties.geounit;  
-            // update data
-            GLOBAL.currentCountry.data = transformData(that.dataSets, that.currentYear, GLOBAL.currentCountry.name); 
+        GLOBAL.currentCountry.code = d.country_code;
+        GLOBAL.currentCountry.name = d.properties.geounit;
+        // update data
+        GLOBAL.currentCountry.data = transformData(that.dataSets, that.currentYear, GLOBAL.currentCountry.name);
     }
     resetZoom(num, that) {
         // reset zoom
-        if (num) { 
+        if (num) {
             if (that.zoomLevel >= num) {
                 that.svg.transition()
-                .duration(250)
-                .call(that.zoom.transform, d3.zoomIdentity 
-                   .translate(25, 0))
+                    .duration(250)
+                    .call(that.zoom.transform, d3.zoomIdentity
+                        .translate(25, 0))
             }
         } else {
             that.svg.transition()
-            .duration(250)
-            .call(that.zoom.transform, d3.zoomIdentity 
-               .translate(25, 0))
+                .duration(250)
+                .call(that.zoom.transform, d3.zoomIdentity
+                    .translate(25, 0))
         }
 
     }
