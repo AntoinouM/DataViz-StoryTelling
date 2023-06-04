@@ -74,7 +74,8 @@ async function drawViz() {
     onCLickUpdateAndScroll('#yesNoMapSection', '#butWaitSection')
     onCLickUpdateAndScroll('#goMapSecond', '#map-section')
     onCLickUpdateAndScroll('#return-map', '#map-section')
-    onCLickUpdateAndScroll('#return-map2', '#intro')
+    onCLickUpdateAndScroll('#return-map2', '#map-section')
+    onCLickUpdateAndScroll('.goUp', '#intro')
     onCLickUpdateAndScroll('#goNext', '#backtoback')
     // Manage scrolling event for barchart year
     addScrollingEventYear()
