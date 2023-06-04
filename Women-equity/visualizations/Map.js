@@ -28,7 +28,7 @@ class Map {
                 'bg': '#282a36'
             },
             //colorScale: configMap.colorScale || [ '#bca0dc', '#b491c8', '#7c5295', '#663a82', '#52307c', '#3c1361'],
-            colorScale: configMap.colorScale || ['#bca0dc', '#663a82', '#3c1361'],
+            colorScale: configMap.colorScale || false,
             clickable: configMap.clickable || false
         }
 
@@ -42,7 +42,8 @@ class Map {
                 paramToCheck: 'scoring',
                 color: 'scoring.wbl_index'
             },
-            sliderGetter: configData.sliderGetter || null
+            sliderGetter: configData.sliderGetter || null,
+            domain: configData.domain || null,
         }
 
         this.initViz();
@@ -102,7 +103,8 @@ class Map {
         that.colorAccessor = d => d[that.configData.dataAccessors.paramToCheck][that.configData.dataAccessors.color]
 
         // domain
-        that.colorScale.domain([that.configData.minWBLIndex, that.configData.maxWBLIndex])
+        if(that.configData.domain) that.colorScale.domain(that.configData.domain)
+            
 
         // slider update
         if (that.configData.sliderGetter !== null) {
@@ -141,20 +143,26 @@ class Map {
             .attr('d', that.path)
             .attr('class', 'country')
             .style('stroke', that.configMap.colors.fg)
-            .style('fill', (d) => {
+        if (!that.configMap.colorScale) {
+            countries.style('fill', 'none')
+                    .style('opacity', '0.3')
+        }
+        else {
+            countries.style('fill', (d) => {
+
                 if (that.configData.dataAccessors.color === null) {
                     return that.configMap.colors.bg
                 } else {
                     //if (d.scoring === undefined) console.log(d)
                     if (d[that.configData.dataAccessors.paramToCheck] !== undefined) {
                         // console.log(d.questions.pay['Can a woman work in an industrial job in the same way as a man?'])
-                        console.log(that.colorScale(that.colorAccessor(d)))
                         return that.colorScale(that.colorAccessor(d))
                     } else {
                         return that.configMap.colors.bg
                     }
                 }
             })
+        }
         if (that.configMap.clickable) {
             this.drawBarchartOnClick(countries)
         }

@@ -24,6 +24,7 @@ const configMap = {
         left: 35
     },
     colors: colors,
+    colorScale: ['#bca0dc', '#663a82', '#3c1361'],
     boundedWidth: undefined,
     boundedHeight: undefined,
     clickable: true
@@ -47,11 +48,11 @@ const configYesNoMap = {
     clickable: false
 }
 
-const backgroundMap = {
+const configBackgroundMap = {
     parentElement: '#backgroundMap',
     linkedElement: '#yesNoMap',
-    width: window.innerWidth * 0.65,
-    height: window.innerHeight * 0.65,
+    width: window.innerWidth * 0.8,
+    height: window.innerHeight * 0.8,
     margin: {
         top: 20,
         right: 20,
@@ -124,4 +125,4 @@ const configBackToBack = {
 }
 
 
-export { configMap, configYesNoMap, configBarchart, colors }
+export { configMap, configYesNoMap, configBackgroundMap, configBarchart, colors }

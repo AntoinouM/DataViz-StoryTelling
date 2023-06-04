@@ -16,6 +16,7 @@ import {
 import {
     configMap,
     configYesNoMap,
+    configBackgroundMap,
     configBarchart,
     colors
 } from './src/config.js'
@@ -58,7 +59,8 @@ async function drawViz() {
 
     mergedData = transformData(GLOBAL.dataSets, GLOBAL.currentYear);
     GLOBAL.yearMap = generateYearMap(wblData)
-    drawBackgroundMap(GLOBAL.dataSets);
+    drawBackgroundMap(GLOBAL.dataSets)
+    drawYesNoMap(GLOBAL.dataSets);
 
     visualizeTotalNumber(demographicsData, wblData);
 
@@ -158,7 +160,7 @@ function visualizeTotalNumber(demographicsData, wblData) {
     let currentValue = 0;
 
     // Define the increment step and interval duration (in milliseconds)
-    const increment = Math.ceil(totalFemalePopulation / 1000); 
+    const increment = Math.ceil(totalFemalePopulation / 100); 
     const intervalDuration = 20; 
 
     // Define the interval function
@@ -259,6 +261,20 @@ function drawBackToBack() {
     barchartHorizontal.update()
 }
 
+function drawBackgroundMap(dataSets) {
+    const configData = {
+        dataAccessors: {
+            paramToCheck: 'empty_map',
+            color: null,
+        },
+        sliderGetter: null,
+    }
+
+    // Create the map object
+    map = new Map(configBackgroundMap, configData, dataSets, 2021);
+    map.updateMap();
+}
+
 function drawMap(dataSets) {
     // init my data object
     const configData = {
@@ -275,8 +291,12 @@ function drawMap(dataSets) {
             'input': '#yearSlider',
             'span': '#rangeValue',
             'btn': '#playBtn',
-        }
+        },
+        domain: undefined
     }
+
+    configData.domain = [configData.minIndex, configData.maxIndex]
+
 
     // Create the map object
     map = new Map(configMap, configData, dataSets, GLOBAL.currentYear);
@@ -285,7 +305,7 @@ function drawMap(dataSets) {
     map.updateMap();
 }
 
-function drawBackgroundMap(dataSets) {
+function drawYesNoMap(dataSets) {
     const configData = {
         minIndex: 'Yes',
         maxIndex: 'No',
@@ -294,6 +314,7 @@ function drawBackgroundMap(dataSets) {
             color: "pay['Can a woman work in an industrial job in the same way as a man?']"
         },
         sliderGetter: null,
+        domain: ['Yes', 'No']
     }
 
     // Create the map object
