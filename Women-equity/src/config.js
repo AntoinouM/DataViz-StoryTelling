@@ -32,7 +32,7 @@ const configMap = {
 
 const configYesNoMap = {
     parentElement: '#yesNoMap',
-    linkedElement: '#bar-chart',
+    linkedElement: '#secondBgMap',
     width: window.innerWidth * 0.65,
     height: window.innerHeight * 0.65,
     margin: {
@@ -49,8 +49,26 @@ const configYesNoMap = {
 }
 
 const configBackgroundMap = {
-    parentElement: '#backgroundMap',
+    parentElement: '#firstBgMap',
     linkedElement: '#yesNoMap',
+    width: window.innerWidth * 0.8,
+    height: window.innerHeight * 0.8,
+    margin: {
+        top: 20,
+        right: 20,
+        bottom: 35,
+        left: 35
+    },
+    colors: colors,
+    colorScale: false,
+    boundedWidth: undefined,
+    boundedHeight: undefined,
+    clickable: false
+}
+
+const configBackgroundMap2 = {
+    parentElement: '#secondBgMap',
+    linkedElement: '#vizMap',
     width: window.innerWidth * 0.8,
     height: window.innerHeight * 0.8,
     margin: {
@@ -125,4 +143,4 @@ const configBackToBack = {
 }
 
 
-export { configMap, configYesNoMap, configBackgroundMap, configBarchart, colors }
+export { configMap, configYesNoMap, configBackgroundMap, configBackgroundMap2, configBarchart, colors }

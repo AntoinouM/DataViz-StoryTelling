@@ -145,7 +145,7 @@ class Map {
             .style('stroke', that.configMap.colors.fg)
         if (!that.configMap.colorScale) {
             countries.style('fill', 'none')
-                    .style('opacity', '0.3')
+                    .style('opacity', '0.1')
         }
         else {
             countries.style('fill', (d) => {

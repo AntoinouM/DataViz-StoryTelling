@@ -48,18 +48,18 @@ h1 {
   color:  var(--color-purple);
 }
 
-#mapBackgroundContainer{
+.mapBackgroundContainer{
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   height: 100vh;
 }
-#mapBackgroundContainer h1{
+.mapBackgroundContainer h1{
   font-size: 3.8em;
 }
 
-#mapBackgroundContainer p{
+.mapBackgroundContainer p{
   font-size: 1.7em;
 }
 
@@ -69,6 +69,10 @@ h1 {
   align-items: center;
 }
 
+.backgroundMap{
+  position: absolute; 
+  z-index: -1;
+}
 
 
 #questions {

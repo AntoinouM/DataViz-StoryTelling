@@ -17,6 +17,7 @@ import {
     configMap,
     configYesNoMap,
     configBackgroundMap,
+    configBackgroundMap2,
     configBarchart,
     colors
 } from './src/config.js'
@@ -70,7 +71,8 @@ async function drawViz() {
 
     // on click go back
     onCLickUpdateAndScroll('#goMapFirst', '#yesNoMapSection')
-    onCLickUpdateAndScroll('#yesNoMapSection', '#map-section')
+    onCLickUpdateAndScroll('#yesNoMapSection', '#butWaitSection')
+    onCLickUpdateAndScroll('#goMapSecond', '#map-section')
     onCLickUpdateAndScroll('#return-map', '#map-section')
     onCLickUpdateAndScroll('#return-map2', '#intro')
     onCLickUpdateAndScroll('#goNext', '#backtoback')
@@ -273,6 +275,10 @@ function drawBackgroundMap(dataSets) {
     // Create the map object
     map = new Map(configBackgroundMap, configData, dataSets, 2021);
     map.updateMap();
+
+     // Create the map object
+     map = new Map(configBackgroundMap2, configData, dataSets, 2021);
+     map.updateMap();
 }
 
 function drawMap(dataSets) {
