@@ -26,7 +26,7 @@ import {
 } from 'lodash';
 
 // WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#intro').scrollIntoView({
+document.querySelector('#backtoback').scrollIntoView({
     behavior: 'smooth',
     block: 'start',
     inline: 'start'
@@ -257,8 +257,7 @@ function drawBackToBack() {
 
     // *********** TO FIX
     //getMeanIndicatorsGlobal(GLOBAL.dataSets.wbl, GLOBAL.currentYear)
-
-    barchartHorizontal = new BacktoBack(configBarchart.region, configData, GLOBAL.yearMap.data.maxYear)
+    barchartHorizontal = new BacktoBack(configBarchart.region, configData, GLOBAL.yearMap)
     barchartHorizontal.update()
 }
 

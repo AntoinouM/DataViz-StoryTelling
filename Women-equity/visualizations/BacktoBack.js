@@ -47,66 +47,94 @@ class BacktoBack {
 
   init() {
     const that = this;
+    that.offset = 80;
     // Calculate the inner bounds
     that.configBackToBack.boundedWidth =
       that.configBackToBack.widthTotal - that.configBackToBack.margin.left - that.configBackToBack.margin.right;
     that.configBackToBack.boundedHeight =
       that.configBackToBack.heightTotal - that.configBackToBack.margin.top - that.configBackToBack.margin.bottom;
 
-    // Initialize the scales
-    that.xScaleLeft = d3.scaleLinear().range([that.boundedWidth / 3, 0]); // 33% of the width for left viz (17% for label)
-    that.xScaleRight = d3.scaleLinear().range([that.boundedWidth / 2, that.boundedWidth]); // 50% for right viz
-
-    that.yScale = d3
-      .scaleBand()
-      .range([that.configBackToBack.boundedHeight, 0])
-      .paddingInner(0.3);
-
-
-    // Initialize the axes
-    //that.yAxis = d3.axisLeft(that.yScale).ticks(6);
-    that.yAxis = d3.axisLeft(that.yScale).ticks(that.configData.bandArray);
-
-    // Initialize the svg
-    that.svg = d3
-      .select(that.configBackToBack.parentElement)
+    // initialize the area
+    that.svg = d3.select(that.configBackToBack.parentElement)
       .append("svg")
-      .attr("width", that.configBackToBack.width)
-      .attr("height", that.configBackToBack.height);
+      .attr("width", that.configBackToBack.widthTotal)
+      .attr("height", that.configBackToBack.heightTotal)
 
-    // Initialize the drawing area
-    that.viz = that.svg.append("g").attr(
-      "transform",
-      `translate(
-                  ${that.configBackToBack.margin.left}, 
-                  ${that.configBackToBack.margin.top}
-                  )`
-    );
+    that.vizLeft = that.svg.append("g")
+      .attr("class", "vizLeft")
+      .attr(
+        "transform",
+        `translate(
+                    ${that.configBackToBack.margin.left}, 
+                    ${that.configBackToBack.margin.top}
+                    )`
+      );
 
-    /**** STATIC ELEMENT ****/
-    that.yAxisG = that.viz.append("g")
-      .attr("class", "axis y-axis")
-      .attr("transform", `translate(${that.configBackToBack.boundedWidth/3}, 0)`);
+    that.vizRight = that.svg.append("g")
+    .attr("class", "vizRight")
+
+
+    // Add X axis
+    that.xLeft = d3.scaleLinear()
+      .range([that.configBackToBack.boundedWidth / 4, 0])
+
+
+    // Y axis
+    that.y = d3.scaleBand()
+      .range([0, that.configBackToBack.boundedHeight])
+      .padding(.2);
+
+    // color
+    that.colorScale = d3.scaleOrdinal()
+      .range(that.configBackToBack.colorScale)
+      .domain(that.configData.bandArray);
+
 
   }
 
   update() {
     const that = this;
 
-    that.colorAccessor = (d) => d[that.configData.leftPart.dataAccessors.color];
-    that.xAccessor = (d) => d[that.configData.leftPart.dataAccessors.x];
-    that.yAccessor = (d) => d[that.configData.leftPart.dataAccessors.y];
+    that.y.domain(that.configData.bandArray)
+    that.vizLeft.append("g")
+      .attr("class", "labels")
+      .attr("transform", "translate(" + (that.configBackToBack.boundedWidth / 4) + ", 0)")
+      .call(d3.axisRight(that.y).tickSize(0))
+      .selectAll("text")
+      .attr("transform", "translate(120,0)")
+      .style("text-anchor", "middle")
+      .style("font-size", 18)
 
-    // Set the domain for the Scales
-    that.yScale.domain(that.configData.bandArray);
-    that.xScaleLeft.domain([0, that.configData.leftPart.maxValue])
+    that.xLeft.domain([0, 100]).nice()
+    that.vizLeft.append("g")
+      .attr("class", "leftXaxis")
+      .attr("transform", "translate(0 ," + that.configBackToBack.boundedHeight + ")")
+      .call(d3.axisBottom(that.xLeft).ticks(5).tickSizeInner(-that.configBackToBack.boundedHeight))
+      .selectAll("text")
+      .attr("transform", "translate(-8,0)rotate(-45)")
+      .style("text-anchor", "end")
+      .style("font-size", 15)
 
-    // colorScale
-    if (that.configBackToBack.colorScale) {
-      that.colorScale = d3.scaleOrdinal()
-        .range(that.configBackToBack.colorScale)
-        .domain(that.configData.bandArray);
-    }
+    // mirror
+    that.widthRight = that.configBackToBack.boundedWidth - document.querySelector(".vizLeft").getBoundingClientRect().width
+    that.xRight = d3.scaleLinear()
+      .range([0, that.widthRight])
+      .domain([0, 120]).nice();
+    that.vizRight.attr(
+      "transform",
+      `translate(
+                  ${document.querySelector(".vizLeft").getBoundingClientRect().width + 15}, 
+                  ${that.configBackToBack.margin.top}
+                  )`
+    );
+    that.vizRight.append("g")
+      .attr("class", "rightXaxis")
+      .attr("transform", "translate(0 ," + that.configBackToBack.boundedHeight + ")")
+      .call(d3.axisBottom(that.xRight).ticks(6).tickSizeInner(-that.configBackToBack.boundedHeight))
+      .selectAll("text")
+      .attr("transform", "translate(8,0)rotate(-45)")
+      .style("text-anchor", "end")
+      .style("font-size", 15)
 
     this.render()
   }
@@ -114,22 +142,34 @@ class BacktoBack {
   render() {
     const that = this;
 
-    // Create the bars
-    const bars = that.viz
-      .selectAll("rect")
-      .data(that.data)
-      .join("rect")
-      .attr("class", "bar")
-      .attr("x", (d, i) => {
-        console.log(d.val)
-        return 100
+    that.vizLeft.selectAll("myRectLeft")
+      .data(that.data.data.maxYear)
+      .enter()
+      .append("rect")
+      .attr("x", d => that.xLeft(d.val))
+      .attr("y", function (d) {
+        return that.y(d.key)
       })
-      .attr("y", (d) => that.yScale(d.key))
-      .attr('width', 100)
-      .attr('height', d => that.configBackToBack.boundedHeight - that.yScale(d.key))
-  }
+      .attr("width", function (d) {
+        return (that.configBackToBack.boundedWidth / 4) - that.xLeft(d.val)
+      })
+      .attr("height", that.y.bandwidth())
+      .attr('fill', d => that.colorScale(d.key))
 
-  /**** HELPER FUNCTION ****/
+    that.y.padding(.4)
+
+    that.vizRight.selectAll("myRectRight")
+      .data(Array.from(that.data.remainingTime, function (item) {
+        return { key: item[0], value: item[1] }
+    }))
+      .enter()
+      .append("rect")
+      .attr("x", that.xRight(0))
+      .attr("y", d => that.y(d.key))
+      .attr("width", d => that.xRight(d.value))
+      .attr("height", that.y.bandwidth())
+      .attr('fill', d => that.colorScale(d.key))
+  }
 }
 
 export default BacktoBack

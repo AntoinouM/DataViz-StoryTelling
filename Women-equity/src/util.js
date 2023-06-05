@@ -89,6 +89,8 @@ export const generateYearMap = (wblData) => {
         remainTime.set(filteredDataMaxYear[i].key, Math.ceil(+diffTo100 / +averageProgressByYear))
     }
 
+    
+
     let yearMap = {
         years: {
             array: years.map(Number),
