@@ -26,7 +26,7 @@ import {
 } from 'lodash';
 
 // WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#backtoback').scrollIntoView({
+document.querySelector('#intro').scrollIntoView({
     behavior: 'smooth',
     block: 'start',
     inline: 'start'
