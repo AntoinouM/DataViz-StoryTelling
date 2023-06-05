@@ -61,7 +61,6 @@ async function drawViz() {
     mergedData = transformData(GLOBAL.dataSets, GLOBAL.currentYear);
     GLOBAL.yearMap = generateYearMap(wblData)
     visualizeTotalNumber(demographicsData, wblData);
-
     drawBackgroundMap(GLOBAL.dataSets)
     drawYesNoMap(GLOBAL.dataSets);
 
