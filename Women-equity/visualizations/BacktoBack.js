@@ -120,13 +120,13 @@ class BacktoBack {
       .data(that.data)
       .join("rect")
       .attr("class", "bar")
-      .attr("x", (d) => {
-        console.log(that.xScaleLeft(d.val))
-        return that.xScaleLeft(d.val)
+      .attr("x", (d, i) => {
+        console.log(d.val)
+        return 100
       })
-      .attr("y", (d) => that.yScale(d.val))
-      .attr('width', that.yScale.bandwidth())
-      .attr('height', d => that.configBackToBack.boundedHeight - that.yScale(d.val))
+      .attr("y", (d) => that.yScale(d.key))
+      .attr('width', 100)
+      .attr('height', d => that.configBackToBack.boundedHeight - that.yScale(d.key))
   }
 
   /**** HELPER FUNCTION ****/
