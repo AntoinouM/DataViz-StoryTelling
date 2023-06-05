@@ -63,8 +63,6 @@ async function drawViz() {
     drawBackgroundMap(GLOBAL.dataSets)
     drawYesNoMap(GLOBAL.dataSets);
 
-    visualizeTotalNumber(demographicsData, wblData);
-
     // console.log(worldData)
     // console.log(demographicsData)
     // console.log(mergedData)
@@ -87,7 +85,7 @@ async function drawViz() {
 
 
     drawMap(GLOBAL.dataSets);
-    //drawBackToBack();
+    drawBackToBack();
 };
 
 
@@ -131,57 +129,6 @@ function scrollTo(objScore, DOMelemTarget) {
     })
 }
 
-function visualizeTotalNumber(demographicsData, wblData) {
-    // Filter the questions data for the year 2023 and the specified question
-    const filteredQuestions = wblData.filter(function (data) {
-        return data["Can a woman work in an industrial job in the same way as a man?"] === "No" && data["Report_Year"] === "2020";
-    });
-
-
-    // Get the list of countries with "No" answer to the question
-    const countriesWithAnswerNo = filteredQuestions.map(function (data) {
-        return data["Economy_Code"];
-    });
-
-    // Filter the population data for female population in the specified countries
-    const filteredPopulation = demographicsData.filter(function (data) {
-        return countriesWithAnswerNo.includes(data["Country_Code"]) && data["Indicator Name"] === "Population, female";
-    });
-
-    // Calculate the total female population in the specified countries
-    const totalFemalePopulation = filteredPopulation.reduce(function (total, data) {
-        return total + parseFloat(data["2020"]);
-    }, 0);
-
-    const totalNumberElement = document.getElementById("totalNumber");
-
-    /**
-     * ANIMATION
-     */
-
-    // Set the initial value to 0
-    let currentValue = 0;
-
-    // Define the increment step and interval duration (in milliseconds)
-    const increment = Math.ceil(totalFemalePopulation / 100); 
-    const intervalDuration = 20; 
-
-    // Define the interval function
-    const incrementValue = () => {
-        currentValue += increment;
-        if (currentValue >= totalFemalePopulation) {
-            // Ensure the final value is displayed without exceeding the total
-            totalNumberElement.innerText = totalFemalePopulation.toLocaleString();
-            clearInterval(interval);
-        } else {
-            totalNumberElement.innerText = currentValue.toLocaleString();
-        }
-    };
-
-    // Start the animation
-    const interval = setInterval(incrementValue, intervalDuration);
-}
-
 function drawBarchart() {
     // init data object
     const configData = {
@@ -216,7 +163,6 @@ function drawBarchart() {
     barchartHorizontal.update()
 
 }
-
 
 function drawBackToBack() {
     // init data object
