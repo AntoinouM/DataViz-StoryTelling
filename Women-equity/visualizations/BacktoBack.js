@@ -168,15 +168,20 @@ class BacktoBack {
       .data(that.data.data.maxYear)
       .enter()
       .append("rect")
-      .attr("x", d => that.xLeft(d.val))
+      .attr("x", d => that.xLeft(0))
       .attr("y", function (d) {
         return that.y(d.key)
       })
-      .attr("width", function (d) {
-        return (that.configBackToBack.boundedWidth / 4) - that.xLeft(d.val)
-      })
+      .attr("width", 0)
       .attr("height", that.y.bandwidth())
       .attr('fill', d => that.colorScale(d.key))
+      .transition()
+        .duration(1500)
+        .ease(d3.easeCubicOut)
+        .attr("width", function (d) {
+          return (that.configBackToBack.boundedWidth / 4) - that.xLeft(d.val)
+        })
+        .attr("x", d => that.xLeft(d.val))
 
     that.y.padding(.4)
 
@@ -188,9 +193,13 @@ class BacktoBack {
       .append("rect")
       .attr("x", that.xRight(0))
       .attr("y", d => that.y(d.key))
-      .attr("width", d => that.xRight(d.value))
+      .attr("width", d => that.xRight(0))
       .attr("height", that.y.bandwidth())
       .attr('fill', d => that.colorScale(d.key))
+        .transition()
+        .duration(1500)
+        .ease(d3.easeCubicOut)
+        .attr("width", d => that.xRight(d.value))
 
     that.vizRight.selectAll(".tick line")
       .attr("stroke", that.configBackToBack.colors.seconday);    

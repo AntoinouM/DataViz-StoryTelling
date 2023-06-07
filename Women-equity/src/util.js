@@ -137,7 +137,22 @@ export const solidifiedData = (dataSets, year) => {
         .merge(_.keyBy(filteredGDP, 'country_code'))
         .values() // convert the combined dictionaries to an array again
         .value()
-    console.log(mergedData)
+
+    mergedData = mergedData
+        .filter((d) => d.gdp != "")
+        .filter((d) => d.women_population != undefined)
+        .filter((d) => d.wbl_index)
+        .map(rows => {
+            return {
+                economy: rows['economy'],
+                gdp: +rows['gdp'],
+                region: rows['region'],
+                wbl_index: +rows['wbl_index'],
+                women_population: +rows['women_population'],
+                year: +rows['report_year'],
+            }
+    })
+    return mergedData;
 }
 
 export const transformData = (dataSets, year, country) => { 

@@ -192,8 +192,8 @@ function drawScatter(dataSets, config) {
     config.bandArray.sort();
 
     const dataNew = solidifiedData(dataSets, 2021)
-    //scatter = new Scatterplot(dataNew, config)
-    //scatter.updateViz()
+    scatter = new Scatterplot(dataNew, config)
+    scatter.updateViz()
 }
 
 function drawBackToBack() {

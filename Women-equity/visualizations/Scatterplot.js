@@ -39,7 +39,7 @@ class Scatterplot {
         that.boundedHeight = that.config.height - that.config.margin.top - that.config.margin.bottom;
 
         // Initialize scales
-        that.xScale = d3.scaleLinear()
+        that.xScale = d3.scaleLog()
             .range([0, that.boundedWidth]);
         that.yScale = d3.scaleLinear()
             .range([that.boundedHeight, 0]);
@@ -49,14 +49,12 @@ class Scatterplot {
             .domain(that.config.bandArray);
         // size R
         that.sqrtScale = d3.scaleSqrt()
-            .range([0, 30]);
+            .range([3, 30]);
 
         
         // Initialize axes
         that.xAxis = d3.axisBottom(that.xScale)
-            .ticks(6)
-            .tickSize(-that.boundedHeight - 10)
-            .tickPadding(10)
+            .tickSize(0)
         that.yAxis = d3.axisLeft(that.yScale)
             .ticks(6)
             .tickSize(-that.boundedWidth - 10)
@@ -101,28 +99,23 @@ class Scatterplot {
             .attr('dy', '0.71em')
             .style('text-anchor', 'end')
             .text(that.config.yAxisText)
-
     }
 
     // updating all the dynamic propreties (x/y domain...)
     updateViz() {
         const that = this;
-        // redefine
-        that.colorAccessor = d => d[that.config.dataAccessors.param2check][that.config.dataAccessors.color]
-        that.xAccessor = d => d[that.config.dataAccessors.x];
-        that.yAccessor = d => d[that.config.dataAccessors.param2check][that.config.dataAccessors.y];
-        that.rAccessor = d => d['women_population']
+    
+        that.colorAccessor = d => d.region
+        that.xAccessor = d => d.gdp;
+        that.yAccessor = d => d.wbl_index;
+        that.rAccessor = d => d.women_population
+
         // Set the domains for scales
-        that.xScale.domain([0, d3.max(that.data, that.xAccessor)]);
+        that.xScale.domain([100000000, d3.max(that.data, d => that.xAccessor(d))]);
         that.yScale.domain([0, 100]);
-        that.sqrtScale.domain([0, ])
-
-        console.log(d3.max(that.data, d => that.rAccessor(d)))
-
-
+        that.sqrtScale.domain([0, d3.max(that.data, d => that.rAccessor(d))]);
 
         this.renderViz(); // Render the vizualisation
-
     }
 
     // render the visualization
@@ -133,33 +126,28 @@ class Scatterplot {
         const circles = that.viz.selectAll('circle')
             .data(that.data)
             .join('circle')
-            .attr('class', 'point')
-            .attr('r', 4)
-            .attr('cx', d => that.xScale(that.xAccessor(d)))
-            .attr('cy', d => {
-                if (d.scoring !== undefined) {
-                    return that.yScale(d.scoring.wbl_index)
-                }
-            })
-            .attr('fill', d => {
-                if (d.scoring !== undefined) {
-                    return that.colorScale(that.colorAccessor(d))
-                } else {
-                   return 'none'
-                }
-            });
+                .attr('class', 'point')
+                .attr('cx', d => that.xScale(d.gdp))
+                .attr('cy', d => that.yScale(120))
+                .attr('fill', d => that.colorScale(d.region))
+                .transition()
+                    .duration(800)
+                    .delay(function(d,i) {
+                        return i * 10
+                    })
+                    .ease(d3.easeCubicIn)
+                    .attr('cy', d => that.yScale(d.wbl_index))
+                    .attr('r', d => that.sqrtScale(d.women_population))
 
         // Create the axes
         that.xAxisG
             .call(that.xAxis)
-            .call(g => {
-                g.select('.domain').remove(); // get rid of the axis and use the markers
-            })
+
         that.yAxisG
             .call(that.yAxis)
-            .call(g => {
-                g.select('.domain').remove(); // get rid of the axis and use the markers
-            })
+        
+        that.yAxisG.selectAll(".tick line")
+            .attr("stroke", '#6272a4');  
     }
 
 }
