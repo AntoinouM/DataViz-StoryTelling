@@ -109,32 +109,54 @@ class BacktoBack {
     that.vizLeft.append("g")
       .attr("class", "leftXaxis")
       .attr("transform", "translate(0 ," + that.configBackToBack.boundedHeight + ")")
-      .call(d3.axisBottom(that.xLeft).ticks(5).tickSizeInner(-that.configBackToBack.boundedHeight))
+      .call(d3.axisBottom(that.xLeft).ticks(5).tickSizeInner(-that.configBackToBack.boundedHeight).tickSizeOuter(0))
       .selectAll("text")
       .attr("transform", "translate(-8,0)rotate(-45)")
       .style("text-anchor", "end")
       .style("font-size", 15)
+
+    // append labels
+    that.svg.append("text")
+    .attr("class", "label-left")
+    .attr("x", document.querySelector(".leftXaxis").getBoundingClientRect().width / 2)
+    .attr("y", document.querySelector(".vizLeft").getBoundingClientRect().height + 36)
+    .attr("fill", that.configBackToBack.colors.fg)
+    .style("text-anchor", "middle")
+    .style("font-size", 18)
+    .text("WBL Index");
 
     // mirror
     that.widthRight = that.configBackToBack.boundedWidth - document.querySelector(".vizLeft").getBoundingClientRect().width
     that.xRight = d3.scaleLinear()
       .range([0, that.widthRight])
       .domain([0, 120]).nice();
+
+    that.axisRight = d3.axisBottom(that.xRight).ticks(6).tickSizeInner(-that.configBackToBack.boundedHeight).tickSizeOuter(0)
+
     that.vizRight.attr(
       "transform",
       `translate(
-                  ${document.querySelector(".vizLeft").getBoundingClientRect().width + 15}, 
+                  ${document.querySelector(".vizLeft").getBoundingClientRect().width + 10}, 
                   ${that.configBackToBack.margin.top}
                   )`
     );
     that.vizRight.append("g")
       .attr("class", "rightXaxis")
       .attr("transform", "translate(0 ," + that.configBackToBack.boundedHeight + ")")
-      .call(d3.axisBottom(that.xRight).ticks(6).tickSizeInner(-that.configBackToBack.boundedHeight))
+      .call(that.axisRight)
       .selectAll("text")
       .attr("transform", "translate(8,0)rotate(-45)")
       .style("text-anchor", "end")
       .style("font-size", 15)
+
+      that.svg.append("text")
+      .attr("class", "label-right")
+      .attr("x", document.querySelector(".rightXaxis").getBoundingClientRect().left - 110)
+      .attr("y", document.querySelector(".vizLeft").getBoundingClientRect().height + 36)
+      .attr("fill", that.configBackToBack.colors.fg)
+      .style("text-anchor", "middle")
+      .style("font-size", 18)
+      .text("Number of years to reach equality");
 
     this.render()
   }
@@ -169,6 +191,11 @@ class BacktoBack {
       .attr("width", d => that.xRight(d.value))
       .attr("height", that.y.bandwidth())
       .attr('fill', d => that.colorScale(d.key))
+
+    that.vizRight.selectAll(".tick line")
+      .attr("stroke", that.configBackToBack.colors.seconday);    
+      that.vizLeft.selectAll(".tick line")
+      .attr("stroke", that.configBackToBack.colors.seconday);
   }
 }
 

@@ -87,12 +87,12 @@ const configBackgroundMap2 = {
 const configBarchart = {
     region: {
         parentElement: '#vizBacktoBack',
-        width: window.innerWidth * 0.75,
-        height: window.innerHeight * 0.5,
+        width: window.innerWidth * 0.6,
+        height: window.innerHeight * 0.4,
         margin: {
             top: 20,
             right: 35,
-            bottom: 35,
+            bottom: 50,
             left: 20
         },
         colors: colors,
@@ -142,5 +142,27 @@ const configBackToBack = {
     },
 }
 
+const configScatterPlot = {
+        parentElement: '#vizBubbleChart',
+        colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
+        width: window.innerWidth * 0.6,
+        height: window.innerHeight * 0.4,
+        margin: {
+            top: 20,
+            right: 35,
+            bottom: 50,
+            left: 20
+        },
+        tooltipPadding: 15,
+        xAxisText: 'WblIndex',
+        yAxisText: 'Gdp',
+        bandArray: [],
+        dataAccessors: {
+            param2check: 'scoring',
+            color:  'region',
+            x: 'gdp',
+            y: 'scoring.wbl_index'
+        }
+}
 
-export { configMap, configYesNoMap, configBackgroundMap, configBackgroundMap2, configBarchart, colors }
+export { configMap, configYesNoMap, configBackgroundMap, configBackgroundMap2, configBarchart, colors, configScatterPlot }

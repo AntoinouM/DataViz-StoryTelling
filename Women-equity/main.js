@@ -1,4 +1,3 @@
-
 import './styles/style.css';
 import * as d3 from 'd3';
 import {
@@ -7,11 +6,13 @@ import {
 import Map from './visualizations/Map'
 import Barchart from './visualizations/Barchart';
 import BacktoBack from './visualizations/BacktoBack';
+import Scatterplot from './visualizations/Scatterplot';
 import {
     transformData,
     AddScrollScore,
     generateYearMap,
-    getMeanIndicatorsGlobal
+    getMeanIndicatorsGlobal,
+    solidifiedData
 } from './src/util.js';
 import {
     configMap,
@@ -19,6 +20,7 @@ import {
     configBackgroundMap,
     configBackgroundMap2,
     configBarchart,
+    configScatterPlot,
     colors
 } from './src/config.js'
 import {
@@ -26,7 +28,7 @@ import {
 } from 'lodash';
 
 // WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#intro').scrollIntoView({
+document.querySelector('#backtoback').scrollIntoView({
     behavior: 'smooth',
     block: 'start',
     inline: 'start'
@@ -40,6 +42,7 @@ let mergedData;
 
 let map;
 let barchartHorizontal;
+let scatter;
 
 
 async function drawViz() {
@@ -87,6 +90,7 @@ async function drawViz() {
 
     drawMap(GLOBAL.dataSets);
     drawBackToBack();
+    drawScatter(GLOBAL.dataSets, configScatterPlot)
 };
 
 
@@ -162,8 +166,8 @@ function visualizeTotalNumber(demographicsData, wblData) {
     let currentValue = 0;
 
     // Define the increment step and interval duration (in milliseconds)
-    const increment = Math.ceil(totalFemalePopulation / 100); 
-    const intervalDuration = 20; 
+    const increment = Math.ceil(totalFemalePopulation / 100);
+    const intervalDuration = 20;
 
     // Define the interval function
     const incrementValue = () => {
@@ -181,39 +185,15 @@ function visualizeTotalNumber(demographicsData, wblData) {
     const interval = setInterval(incrementValue, intervalDuration);
 }
 
-function drawBarchart() {
-    // init data object
-    const configData = {
-        xAxisTicks: 'Region',
-        yAxisTicks: '%',
-        maxValue: 100,
-        bandArray: [],
-        dataAccessors: {
-            color: 'key',
-            x: 'key',
-            y: 'val',
-        }
-    }
-
+function drawScatter(dataSets, config) {
     GLOBAL.yearMap.data.maxYear.forEach(element => {
-        configData.bandArray.push(element.key)
+        config.bandArray.push(element.key)
     })
-    configData.bandArray.sort();
+    config.bandArray.sort();
 
-    // reorder datasets from yearMap
-    GLOBAL.yearMap.data.maxYear = GLOBAL.yearMap.data.maxYear.sort((a, b) => {
-        return configData.bandArray.indexOf(a.key) - configData.bandArray.indexOf(b.key)
-    })
-    GLOBAL.yearMap.data.minYear = GLOBAL.yearMap.data.minYear.sort((a, b) => {
-        return configData.bandArray.indexOf(a.key) - configData.bandArray.indexOf(b.key)
-    })
-
-    // *** TO FIX
-    //getMeanIndicatorsGlobal(GLOBAL.dataSets.wbl, GLOBAL.currentYear)
-
-    barchartHorizontal = new Barchart(configBarchart.region, configData, GLOBAL.yearMap.data.maxYear)
-    barchartHorizontal.update()
-
+    const dataNew = solidifiedData(dataSets, 2021)
+    //scatter = new Scatterplot(dataNew, config)
+    //scatter.updateViz()
 }
 
 function drawBackToBack() {
@@ -274,9 +254,9 @@ function drawBackgroundMap(dataSets) {
     map = new Map(configBackgroundMap, configData, dataSets, 2021);
     map.updateMap();
 
-     // Create the map object
-     map = new Map(configBackgroundMap2, configData, dataSets, 2021);
-     map.updateMap();
+    // Create the map object
+    map = new Map(configBackgroundMap2, configData, dataSets, 2021);
+    map.updateMap();
 }
 
 function drawMap(dataSets) {
@@ -339,7 +319,11 @@ function addScrollingEventYear() {
     barChartSliderScore.score = years.indexOf(GLOBAL.currentYear)
 
     // set Mutable Observer
-    observeYear(document.getElementById('selected'), { attributes: true, childList: true, subtree: true })
+    observeYear(document.getElementById('selected'), {
+        attributes: true,
+        childList: true,
+        subtree: true
+    })
 
     function modifyYearOnScroll(event) {
         const selected = d3.select('#selected')
