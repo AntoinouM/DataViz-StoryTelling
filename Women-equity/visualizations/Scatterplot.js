@@ -15,6 +15,7 @@ class Scatterplot {
                 bottom: 30,
                 left: 30
             },
+            colors: config.colors || null,
             bandArray: config.bandArray,
             tooltipPadding: config.tooltipPadding || 15,
             xAxisText: config.xAxisText || 'Distance',
@@ -51,7 +52,7 @@ class Scatterplot {
         that.sqrtScale = d3.scaleSqrt()
             .range([3, 30]);
 
-        
+
         // Initialize axes
         that.xAxis = d3.axisBottom(that.xScale)
             .tickSize(0)
@@ -83,35 +84,19 @@ class Scatterplot {
             .attr('transform', `translate(0, ${that.boundedHeight})`);
         that.yAxisG = that.viz.append('g')
             .attr('class', 'axis y-axis');
-
-        // titles for both axes
-        that.xAxisG.append('text')
-            .attr('class', 'title axis-title')
-            .attr('x', that.boundedWidth + 10)
-            .attr('y', -15)
-            .attr('dy', '0.71em')
-            .style('text-anchor', 'end')
-            .text(that.config.xAxisText)
-        that.yAxisG.append('text')
-            .attr('class', 'title axis-title')
-            .attr('x', 5)
-            .attr('y', -25)
-            .attr('dy', '0.71em')
-            .style('text-anchor', 'end')
-            .text(that.config.yAxisText)
     }
 
     // updating all the dynamic propreties (x/y domain...)
     updateViz() {
         const that = this;
-    
+
         that.colorAccessor = d => d.region
         that.xAccessor = d => d.gdp;
         that.yAccessor = d => d.wbl_index;
         that.rAccessor = d => d.women_population
 
         // Set the domains for scales
-        that.xScale.domain([100000000, d3.max(that.data, d => that.xAccessor(d))]);
+        that.xScale.domain([d3.min(that.data, d => that.xAccessor(d)), d3.max(that.data, d => that.xAccessor(d))]).nice();
         that.yScale.domain([0, 100]);
         that.sqrtScale.domain([0, d3.max(that.data, d => that.rAccessor(d))]);
 
@@ -126,18 +111,20 @@ class Scatterplot {
         const circles = that.viz.selectAll('circle')
             .data(that.data)
             .join('circle')
-                .attr('class', 'point')
-                .attr('cx', d => that.xScale(d.gdp))
-                .attr('cy', d => that.yScale(120))
-                .attr('fill', d => that.colorScale(d.region))
-                .transition()
-                    .duration(800)
-                    .delay(function(d,i) {
-                        return i * 10
-                    })
-                    .ease(d3.easeCubicIn)
-                    .attr('cy', d => that.yScale(d.wbl_index))
-                    .attr('r', d => that.sqrtScale(d.women_population))
+            .attr('class', 'point')
+            .attr('cx', d => that.xScale(d.gdp))
+            .attr('cy', d => that.yScale(120))
+            .attr('r', d => that.sqrtScale(0))
+            .attr('fill', d => that.colorScale(d.region))
+            .style("stroke", that.config.colors.bg)
+            .transition()
+            .duration(400)
+            .delay(function (d, i) {
+                return i * 7
+            })
+            .ease(d3.easeSinIn)
+            .attr('cy', d => that.yScale(d.wbl_index))
+            .attr('r', d => that.sqrtScale(d.women_population))
 
         // Create the axes
         that.xAxisG
@@ -145,9 +132,38 @@ class Scatterplot {
 
         that.yAxisG
             .call(that.yAxis)
-        
-        that.yAxisG.selectAll(".tick line")
-            .attr("stroke", '#6272a4');  
+
+        that.yAxisG.selectAll(".tick:not(:first-of-type) line")
+            .attr("stroke", '#6272a4')
+            .attr("stroke-dasharray", "2,2")
+        //that.yAxisG.select(".domain").remove()
+        that.xAxisG.selectAll("text")
+            .attr("transform", "translate(-8,0)rotate(-45)")
+            .style("text-anchor", "end")
+            .style("font-size", 12)
+
+        that.yAxisG.selectAll("text")
+            .style("text-anchor", "end")
+            .style("font-size", 12)
+
+        // titles for both axes
+        that.xAxisG.append('text')
+            .attr('class', 'title axis-title')
+            .attr('x', that.boundedWidth + 10)
+            .attr('y', -15)
+            .attr("fill", that.config.colors.fg)
+            .style("font-size", 18)
+            .style('text-anchor', 'end')
+            .text(that.config.xAxisText)
+        that.yAxisG.append('text')
+            .attr('class', 'title axis-title')
+            .attr('x', 0)
+            .attr('y', -15)
+            .attr("fill", that.config.colors.fg)
+            .style("font-size", 18)
+            .style('text-anchor', 'middle')
+            .text(that.config.yAxisText)
+
     }
 
 }

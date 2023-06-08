@@ -202,9 +202,11 @@ class BacktoBack {
         .attr("width", d => that.xRight(d.value))
 
     that.vizRight.selectAll(".tick line")
-      .attr("stroke", that.configBackToBack.colors.seconday);    
+      .attr("stroke", that.configBackToBack.colors.seconday)
+      .attr("stroke-dasharray", "2,2")
       that.vizLeft.selectAll(".tick line")
-      .attr("stroke", that.configBackToBack.colors.seconday);
+      .attr("stroke", that.configBackToBack.colors.seconday)
+      .attr("stroke-dasharray", "2,2")
   }
 }
 
