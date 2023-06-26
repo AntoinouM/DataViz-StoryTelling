@@ -36,7 +36,52 @@ class YesNoMap extends Map {
         }
       });
     }
+
+    this.drawLegend();
   }
+
+  drawLegend() {
+    const that = this;
+  
+    const legendWidth = 200;
+    const legendHeight = 20;
+  
+    const legend = d3
+      .select('#yesNoMapLegend')
+      .append('svg')
+      .attr('class', 'legend')
+      .attr('width', legendWidth)
+      .attr('height', legendHeight);
+  
+    const colors = [that.configMap.colorScale[0], that.configMap.colorScale[1]];
+  
+    const legendItems = legend
+      .selectAll('.legend-item')
+      .data(colors)
+      .enter()
+      .append('g')
+      .attr('class', 'legend-item')
+      .attr('transform', (d, i) => `translate(${i * 100}, 0)`);
+  
+    legendItems
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 20)
+      .attr('height', 20)
+      .style('fill', (d) => d);
+  
+    legendItems
+      .append('text')
+      .attr('x', 30)
+      .attr('y', 15)
+      .text((d, i) => (i === 0 ? 'Yes' : 'No'))
+      .style('font-size', '12px')
+      .style('fill', 'white');
+  }
+  
+  
+  
   
 }
 
