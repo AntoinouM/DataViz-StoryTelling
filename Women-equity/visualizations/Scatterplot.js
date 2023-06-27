@@ -117,7 +117,8 @@ class Scatterplot {
             .attr('r', d => that.sqrtScale(0))
             .attr('fill', d => that.colorScale(d.region))
             .style("stroke", that.config.colors.bg)
-            .transition()
+            
+            circles.transition()
             .duration(400)
             .delay(function (d, i) {
                 return i * 7
@@ -149,7 +150,7 @@ class Scatterplot {
         // titles for both axes
         that.xAxisG.append('text')
             .attr('class', 'title axis-title')
-            .attr('x', that.boundedWidth + 10)
+            .attr('x', that.boundedWidth)
             .attr('y', -15)
             .attr("fill", that.config.colors.fg)
             .style("font-size", 18)
@@ -157,13 +158,32 @@ class Scatterplot {
             .text(that.config.xAxisText)
         that.yAxisG.append('text')
             .attr('class', 'title axis-title')
-            .attr('x', 0)
+            .attr('x', 15)
             .attr('y', -15)
             .attr("fill", that.config.colors.fg)
             .style("font-size", 18)
             .style('text-anchor', 'middle')
             .text(that.config.yAxisText)
 
+        // Add tooltips
+        circles.on('mouseover', (event, d) => {
+            d3.select('#tooltip')
+                .style('opacity', 1)
+                .style('left', (event.clientX) + 'px')
+                .style('top', event.clientY + 'px')
+                .html(`
+                    <div class="tooltip-title">${d.economy}</div>
+                    <ul>
+                        <li>GDP: ${Math.round(d.gdp / 1000000)} millions</li>
+                        <li>${d.wbl_index} %</li>
+                        <li>${Math.ceil(d.women_population / 1000)} thousands of women</li>
+                    </ul>
+                `)
+        })
+        circles.on('mouseleave', (event, d) => {
+            d3.select('#tooltip')
+                .style('opacity', 0)
+        })
     }
 
 }

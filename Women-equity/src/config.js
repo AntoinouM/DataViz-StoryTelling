@@ -88,12 +88,12 @@ const configBarchart = {
     region: {
         parentElement: '#vizBacktoBack',
         width: window.innerWidth * 0.6,
-        height: window.innerHeight * 0.4,
+        height: window.innerHeight * 0.35,
         margin: {
             top: 20,
-            right: 35,
-            bottom: 50,
-            left: 20
+            right: 0,
+            bottom: 55,
+            left: 35
         },
         colors: colors,
         colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
@@ -119,44 +119,21 @@ const configBarchart = {
     }
 
 }
-
-const configBackToBack = {
-    parentElement: '#vizBacktoBack',
-    width: window.innerWidth * 0.6,
-    height: window.innerHeight * 0.35,
-    margin: {
-        top: 20,
-        right: 0,
-        bottom: 35,
-        left: 25
-    },
-    colors: colors,
-    colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
-    boundedWidth: undefined,
-    boundedHeight: undefined,
-    leftPart: {
-
-    },
-    rightPart: {
-
-    },
-}
-
 const configScatterPlot = {
         parentElement: '#vizBubbleChart',
         colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
-        width: window.innerWidth * 0.5,
-        height: window.innerHeight * 0.35,
+        width: window.innerWidth * 0.6,
+        height: window.innerHeight * 0.3,
         margin: {
             top: 40,
-            right: 10,
+            right: 0,
             bottom: 35,
             left: 35
         },
         colors: colors,
         tooltipPadding: 15,
-        xAxisText: 'WblIndex',
-        yAxisText: 'Gdp',
+        xAxisText: 'GDP',
+        yAxisText: 'WBL Index',
         bandArray: [],
         dataAccessors: {
             param2check: 'scoring',

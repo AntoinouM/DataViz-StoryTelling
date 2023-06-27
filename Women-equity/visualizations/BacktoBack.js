@@ -164,7 +164,7 @@ class BacktoBack {
   render() {
     const that = this;
 
-    that.vizLeft.selectAll("myRectLeft")
+    that.vizLeft.selectAll("rect")
       .data(that.data.data.maxYear)
       .enter()
       .append("rect")
@@ -185,7 +185,7 @@ class BacktoBack {
 
     that.y.padding(.4)
 
-    that.vizRight.selectAll("myRectRight")
+    const barsRight = that.vizRight.selectAll("rect")
       .data(Array.from(that.data.remainingTime, function (item) {
         return { key: item[0], value: item[1] }
     }))
@@ -207,6 +207,8 @@ class BacktoBack {
       that.vizLeft.selectAll(".tick line")
       .attr("stroke", that.configBackToBack.colors.seconday)
       .attr("stroke-dasharray", "2,2")
+
+
   }
 }
 
