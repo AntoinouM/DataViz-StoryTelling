@@ -144,6 +144,9 @@ class Barchart {
       .transition()
       .duration(600)
       .call(that.xAxis)
+      .selectAll("text")
+      .attr("transform", "translate(8,0)rotate(-45)")
+      .style("text-anchor", "end")
       .call((g) => g.select(".domain").remove()); // get rid of the axis line and just use the markers and grid lines
 
     that.yAxisG

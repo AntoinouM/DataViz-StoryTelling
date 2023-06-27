@@ -103,13 +103,13 @@ const configBarchart = {
 
     country: {
         parentElement: '#vizBarchart',
-        width: window.innerWidth * 0.5,
-        height: window.innerHeight * 0.4,
+        width: window.innerWidth * 0.4,
+        height: window.innerHeight * 0.3,
         margin: {
             top: 20,
             right: 35,
-            bottom: 35,
-            left: 20
+            bottom: 75,
+            left: 25
         },
         colors: colors,
         colorScale: null,

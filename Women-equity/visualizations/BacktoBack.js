@@ -91,8 +91,8 @@ class BacktoBack {
       .domain(that.configData.bandArray);
 
     // Reference to the tooltip
-    that.tooltip = d3.select('#tooltip');
-    that.tooltipText = d3.select('#information');
+    that.tooltip = d3.select('#tooltipB2B');
+    that.tooltipText = d3.select('#informationB2B');
   }
 
   update() {

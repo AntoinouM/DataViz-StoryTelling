@@ -46,6 +46,7 @@ section {
 h1 {
   font-size: 2em;
   color:  var(--color-purple);
+  margin-top: 0;
 }
 
 h2 {
@@ -102,6 +103,7 @@ h2 {
 #questions {
   display: none;
   margin-top: 1%;
+  font-size: 10pt;
   width: 55%;
   border: 1px solid var(--color-secondary);
   height:fit-content;
@@ -136,12 +138,37 @@ h2 {
 #vizMap {
   border: 1px solid var(--color-fg);
   display: flex;
-  margin-top: 4%;
+  margin-top: 2%;
   justify-content: center;
 } 
 
+#legendMap {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 40%;
+  left: 7%;
+}
+
+#legendTitle {
+  font-weight: bold;
+}
+
+#topText, #btmText {
+  color: var(--color-fg);
+  text-align: center;
+}
+
+#colorLegend {
+  width: 30px;
+  height: 200px;
+  border: 1px solid var(--color-fg);
+  background: linear-gradient(180deg, rgba(114,22,116,1) 6%, rgba(181,202,226,1) 47%, rgba(255,255,255,1) 100%);
+}
+
 .titleSection {
-  margin-top: 7%;
+  margin-top: 2%;
 }
 
 #titleIntro {
@@ -155,7 +182,7 @@ h2 {
 }
 
 /* Tooltip */
-#tooltip {
+#tooltipB2B, #tooltipMap {
   opacity: 0;
   position: absolute;
   top: -14px;
@@ -173,7 +200,7 @@ h2 {
   transition: opacity 1s;
 }
 
-#tooltip:before {
+#tooltipB2B:before, #tooltipMap:before {
   content: '';
   position: absolute;
   bottom: 0;

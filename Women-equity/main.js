@@ -89,6 +89,8 @@ async function drawViz() {
     drawMap(GLOBAL.dataSets);
     // align info and map
     document.querySelector(".infoViz").style.width = document.querySelector("#vizMap").firstChild.width.baseVal.value + 'px'
+    document.querySelector(".infoBarchart").style.width = document.querySelector("#titleBarchart").getBoundingClientRect().width + 150 + 'px' 
+    console.log(document.querySelector("#titleBarchart").getBoundingClientRect())
 
     drawBackToBack();
     drawScatter(GLOBAL.dataSets, configScatterPlot)
@@ -367,6 +369,8 @@ function observeYear(DOMelem, config) {
 
     // Callback function to execute when mutations are observed
     const callback = (mutationList, observer) => {
+
+        document.querySelector('#currentYear').innerHTML = GLOBAL.currentYear;
         // redraw chart
         GLOBAL.currentCountry.dataUpdate()
         GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'))
