@@ -196,9 +196,13 @@ class Scatterplot {
                     <td>${d.wbl_index.toFixed(1)} %</td>
                   </tr>
                   <tr>
-                  <td><b>GDP</b></td>
-                  <td>${(d.gdp/1000000000).toFixed(1)} Md</td>
-                </tr>
+                    <td><b>GDP</b></td>
+                    <td>${(d.gdp/1000000000).toFixed(1)} Md</td>
+                  </tr>
+                  <tr>
+                    <td><b>GDP</b></td>
+                    <td>${(d.gdp/1000000000).toFixed(1)} Md</td>
+                  </tr>
                 </table>
               `
             })

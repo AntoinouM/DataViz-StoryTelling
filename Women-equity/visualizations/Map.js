@@ -75,7 +75,7 @@ class Map {
         that.projection = d3
             .geoMercator()
             .translate([that.configMap.width / 2.2, that.configMap.height / 1.4])
-            .scale([150]);
+            .scale([120]);
         that.path = d3.geoPath().projection(that.projection);
         // scales
         that.colorScale = d3
@@ -186,11 +186,6 @@ class Map {
 
             // draw barchart
             GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'));
-
-            // check for indicator
-            if (GLOBAL.currentIndicator.name) {
-                //update questions
-            }
 
             // scroll to barchart
             const barchartSection = document.querySelector(that.configMap.linkedElement)

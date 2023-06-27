@@ -28,7 +28,7 @@ import {
 } from 'lodash';
 
 // WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#backtoback').scrollIntoView({
+document.querySelector('#map-section').scrollIntoView({
     behavior: 'smooth',
     block: 'start',
     inline: 'start'
@@ -86,10 +86,10 @@ async function drawViz() {
     let scrollingBarChart;
     scrollingBarChart = AddScrollScore('#bar-chart', scrollingBarChart, null)
 
-    //scrollTo(scrollingBarChart, document.querySelector('#backtoback'))
-
-
     drawMap(GLOBAL.dataSets);
+    // align info and map
+    document.querySelector(".infoViz").style.width = document.querySelector("#vizMap").firstChild.width.baseVal.value + 'px'
+
     drawBackToBack();
     drawScatter(GLOBAL.dataSets, configScatterPlot)
 
