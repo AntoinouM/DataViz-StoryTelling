@@ -31,6 +31,10 @@ class Scatterplot {
         this.initViz(); // Create the chart
     }
 
+    setData(data) {
+        this.data = data;
+    }
+
     // Initializes the scale, axes, appends static elements (axis, title...)
     initViz() {
         const that = this;
@@ -84,6 +88,10 @@ class Scatterplot {
             .attr('transform', `translate(0, ${that.boundedHeight})`);
         that.yAxisG = that.viz.append('g')
             .attr('class', 'axis y-axis');
+
+        // Reference to the tooltip
+        that.tooltip = d3.select('#tooltip');
+        that.tooltipText = d3.select('#information');
     }
 
     // updating all the dynamic propreties (x/y domain...)
@@ -113,12 +121,12 @@ class Scatterplot {
             .join('circle')
             .attr('class', 'point')
             .attr('cx', d => that.xScale(d.gdp))
-            .attr('cy', d => that.yScale(120))
+            .attr('cy', d => that.yScale(140))
             .attr('r', d => that.sqrtScale(0))
             .attr('fill', d => that.colorScale(d.region))
             .style("stroke", that.config.colors.bg)
-            
-            circles.transition()
+
+        circles.transition()
             .duration(400)
             .delay(function (d, i) {
                 return i * 7
@@ -143,9 +151,11 @@ class Scatterplot {
             .style("text-anchor", "end")
             .style("font-size", 12)
 
-        that.yAxisG.selectAll("text")
-            .style("text-anchor", "end")
-            .style("font-size", 12)
+        if (that.yAxisG._groups[0][0].children.length === 7) {
+            that.yAxisG.selectAll("text")
+                .style("text-anchor", "end")
+                .style("font-size", 12)
+        }
 
         // titles for both axes
         that.xAxisG.append('text')
@@ -156,36 +166,54 @@ class Scatterplot {
             .style("font-size", 18)
             .style('text-anchor', 'end')
             .text(that.config.xAxisText)
-        that.yAxisG.append('text')
-            .attr('class', 'title axis-title')
-            .attr('x', 15)
-            .attr('y', -15)
-            .attr("fill", that.config.colors.fg)
-            .style("font-size", 18)
-            .style('text-anchor', 'middle')
-            .text(that.config.yAxisText)
 
-        // Add tooltips
-        circles.on('mouseover', (event, d) => {
-            d3.select('#tooltip')
-                .style('opacity', 1)
-                .style('left', (event.clientX) + 'px')
-                .style('top', event.clientY + 'px')
-                .html(`
-                    <div class="tooltip-title">${d.economy}</div>
-                    <ul>
-                        <li>GDP: ${Math.round(d.gdp / 1000000)} millions</li>
-                        <li>${d.wbl_index} %</li>
-                        <li>${Math.ceil(d.women_population / 1000)} thousands of women</li>
-                    </ul>
-                `)
-        })
-        circles.on('mouseleave', (event, d) => {
-            d3.select('#tooltip')
-                .style('opacity', 0)
-        })
+
+        if (that.yAxisG._groups[0][0].children.length === 7) {
+            that.yAxisG.append('text')
+                .attr('class', 'title axis-title')
+                .attr('x', 15)
+                .attr('y', -15)
+                .attr("fill", that.config.colors.fg)
+                .style("font-size", 18)
+                .style('text-anchor', 'middle')
+                .text(that.config.yAxisText)
+        }
+
+        this.createTooltips(circles, that)
     }
 
+    createTooltips(circles, that) {
+        circles.on('mouseover', function (event, d) {
+            that.tooltipText.html(function () {
+                return `
+                <table>
+                  <tr>
+                    <td><b>Country:</b></td>
+                    <td>${d.economy}</td>
+                  </tr>
+                  <tr>
+                    <td><b>WBL Score</b></td>
+                    <td>${d.wbl_index.toFixed(1)} %</td>
+                  </tr>
+                  <tr>
+                  <td><b>GDP</b></td>
+                  <td>${(d.gdp/1000000000).toFixed(1)} Md</td>
+                </tr>
+                </table>
+              `
+            })
+        }).on('mousemove', function (event, d) {
+            // Move the tooltip itself
+            let width = that.tooltip.node().getBoundingClientRect().width;
+            let height = that.tooltip.node().getBoundingClientRect().height;
+            that.tooltip
+                .style('left', event.clientX - (width / 2) - 5 + 'px')
+                .style('top', event.clientY - (height) - 15 + 'px')
+                .style('opacity', 1);
+        }).on('mouseout', function () {
+            that.tooltip.style('opacity', 0);
+        });
+    }
 }
 
 export default Scatterplot;

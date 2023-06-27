@@ -39,10 +39,10 @@ document.querySelector('#backtoback').scrollIntoView({
  */
 GLOBAL.currentYear = 2000;
 let mergedData;
-
 let map;
 let barchartHorizontal;
 let scatter;
+let dispatcher;
 
 
 async function drawViz() {
@@ -61,6 +61,7 @@ async function drawViz() {
         'gdp': gdpData,
     }
 
+    dispatcher = d3.dispatch('filterRegion')
     mergedData = transformData(GLOBAL.dataSets, GLOBAL.currentYear);
     GLOBAL.yearMap = generateYearMap(wblData)
     visualizeTotalNumber(demographicsData, wblData);
@@ -91,6 +92,23 @@ async function drawViz() {
     drawMap(GLOBAL.dataSets);
     drawBackToBack();
     drawScatter(GLOBAL.dataSets, configScatterPlot)
+
+    dispatcher.on('filterRegion', selected => {
+        GLOBAL.yearMap.data.maxYear.forEach(element => {
+            configScatterPlot.bandArray.push(element.key)
+        })
+        configScatterPlot.bandArray.sort();
+    
+        const dataNew = solidifiedData(GLOBAL.dataSets, 2021)
+        if (selected.length === 0) {
+            scatter.setData(dataNew)
+        } else {
+            const filteredData = dataNew.filter(e => selected.includes(e.region))
+            scatter.setData(filteredData)
+        }
+
+        scatter.updateViz();
+    })
 };
 
 
@@ -237,7 +255,7 @@ function drawBackToBack() {
 
     // *********** TO FIX
     //getMeanIndicatorsGlobal(GLOBAL.dataSets.wbl, GLOBAL.currentYear)
-    barchartHorizontal = new BacktoBack(configBarchart.region, configData, GLOBAL.yearMap)
+    barchartHorizontal = new BacktoBack(configBarchart.region, configData, GLOBAL.yearMap, dispatcher)
     barchartHorizontal.update()
 }
 

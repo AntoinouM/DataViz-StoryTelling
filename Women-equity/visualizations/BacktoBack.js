@@ -4,7 +4,7 @@ import {
 } from '../src/global.js';
 
 class BacktoBack {
-  constructor(configBackToBack, configData, data) {
+  constructor(configBackToBack, configData, data, dispatcher) {
     this.data = data;
 
     this.configBackToBack = {
@@ -41,6 +41,7 @@ class BacktoBack {
       }
     }
 
+    this.dispatcher = dispatcher;
 
     this.init();
   }
@@ -71,7 +72,7 @@ class BacktoBack {
       );
 
     that.vizRight = that.svg.append("g")
-    .attr("class", "vizRight")
+      .attr("class", "vizRight")
 
 
     // Add X axis
@@ -89,7 +90,9 @@ class BacktoBack {
       .range(that.configBackToBack.colorScale)
       .domain(that.configData.bandArray);
 
-
+    // Reference to the tooltip
+    that.tooltip = d3.select('#tooltip');
+    that.tooltipText = d3.select('#information');
   }
 
   update() {
@@ -113,17 +116,17 @@ class BacktoBack {
       .selectAll("text")
       .attr("transform", "translate(-8,0)rotate(-45)")
       .style("text-anchor", "end")
-      .style("font-size", 15)
+      .style("font-size", 12)
 
     // append labels
     that.svg.append("text")
-    .attr("class", "label-left")
-    .attr("x", document.querySelector(".leftXaxis").getBoundingClientRect().width / 2)
-    .attr("y", document.querySelector(".vizLeft").getBoundingClientRect().height + 36)
-    .attr("fill", that.configBackToBack.colors.fg)
-    .style("text-anchor", "middle")
-    .style("font-size", 18)
-    .text("WBL Index");
+      .attr("class", "label-left")
+      .attr("x", document.querySelector(".leftXaxis").getBoundingClientRect().width / 2)
+      .attr("y", document.querySelector(".vizLeft").getBoundingClientRect().height + 36)
+      .attr("fill", that.configBackToBack.colors.fg)
+      .style("text-anchor", "middle")
+      .style("font-size", 18)
+      .text("WBL Index");
 
     // mirror
     that.widthRight = that.configBackToBack.boundedWidth - document.querySelector(".vizLeft").getBoundingClientRect().width
@@ -147,9 +150,9 @@ class BacktoBack {
       .selectAll("text")
       .attr("transform", "translate(8,0)rotate(-45)")
       .style("text-anchor", "end")
-      .style("font-size", 15)
+      .style("font-size", 12)
 
-      that.svg.append("text")
+    that.svg.append("text")
       .attr("class", "label-right")
       .attr("x", document.querySelector(".rightXaxis").getBoundingClientRect().left - 110)
       .attr("y", document.querySelector(".vizLeft").getBoundingClientRect().height + 36)
@@ -164,10 +167,11 @@ class BacktoBack {
   render() {
     const that = this;
 
-    that.vizLeft.selectAll("rect")
+    const barsLeft = that.vizLeft.selectAll("rect")
       .data(that.data.data.maxYear)
       .enter()
       .append("rect")
+      .attr("class", "bar")
       .attr("x", d => that.xLeft(0))
       .attr("y", function (d) {
         return that.y(d.key)
@@ -175,40 +179,115 @@ class BacktoBack {
       .attr("width", 0)
       .attr("height", that.y.bandwidth())
       .attr('fill', d => that.colorScale(d.key))
-      .transition()
-        .duration(1500)
-        .ease(d3.easeCubicOut)
-        .attr("width", function (d) {
-          return (that.configBackToBack.boundedWidth / 4) - that.xLeft(d.val)
-        })
-        .attr("x", d => that.xLeft(d.val))
+
+    barsLeft.transition()
+      .duration(1500)
+      .ease(d3.easeCubicOut)
+      .attr("width", function (d) {
+        return (that.configBackToBack.boundedWidth / 4) - that.xLeft(d.val)
+      })
+      .attr("x", d => that.xLeft(d.val))
 
     that.y.padding(.4)
 
     const barsRight = that.vizRight.selectAll("rect")
       .data(Array.from(that.data.remainingTime, function (item) {
-        return { key: item[0], value: item[1] }
-    }))
+        return {
+          key: item[0],
+          value: item[1]
+        }
+      }))
       .enter()
       .append("rect")
+      .attr("class", "bar")
       .attr("x", that.xRight(0))
       .attr("y", d => that.y(d.key))
       .attr("width", d => that.xRight(0))
       .attr("height", that.y.bandwidth())
       .attr('fill', d => that.colorScale(d.key))
-        .transition()
-        .duration(1500)
-        .ease(d3.easeCubicOut)
-        .attr("width", d => that.xRight(d.value))
+
+    barsRight.transition()
+      .duration(1500)
+      .ease(d3.easeCubicOut)
+      .attr("width", d => that.xRight(d.value))
 
     that.vizRight.selectAll(".tick line")
       .attr("stroke", that.configBackToBack.colors.seconday)
       .attr("stroke-dasharray", "2,2")
-      that.vizLeft.selectAll(".tick line")
+    that.vizLeft.selectAll(".tick line")
       .attr("stroke", that.configBackToBack.colors.seconday)
       .attr("stroke-dasharray", "2,2")
 
+    this.createTooltips(barsLeft, that)
+    this.createTooltips(barsRight, that)
 
+    barsLeft.on('click', function(event) {
+      const isActive = d3.select(this).classed('active')
+      const filling = this.attributes.fill
+      let matchingBar;
+      d3.select(this).classed('active', !isActive)
+      for (const bar of barsRight) {
+        if (bar.attributes.fill.value === filling.value) matchingBar = bar
+      }
+      //d3.select(matchingBar).classed('active', !isActive)
+      d3.select(matchingBar).attr('class', this.classList.value)
+
+      const selectedRegions = that.vizLeft.selectAll('.bar.active').data().map(e => e.key)
+      that.dispatcher.call('filterRegion', event, selectedRegions)
+    })
+
+    barsRight.on('click', function(event) {
+      const isActive = d3.select(this).classed('active')
+      const filling = this.attributes.fill
+      let matchingBar;
+      d3.select(this).classed('active', !isActive)
+      for (const bar of barsLeft) {
+        if (bar.attributes.fill.value === filling.value) matchingBar = bar
+      }
+      //d3.select(matchingBar).classed('active', !isActive)
+      d3.select(matchingBar).attr('class', this.classList.value)
+
+      const selectedRegions = that.vizRight.selectAll('.bar.active').data().map(e => e.key)
+      that.dispatcher.call('filterRegion', event, selectedRegions)
+    })
+  }
+
+  createTooltips(bars, that) {
+    bars.on('mouseover', function (event, d) {
+      that.tooltipText.html(function () {
+        if (bars._parents[0].className.baseVal === "vizRight") {
+          return `
+          <span><b>${d.key}</b></span>
+            <table>
+              <tr>
+                <td><b>Time before equity: </b></td>
+                <td>${d.value} years</td>
+              </tr>
+            </table>
+          `
+        } else {
+          return `
+          <span><b>${d.key}</b></span>
+            <table>
+              <tr>
+                <td><b>WBL Score: </b></td>
+                <td>${(d.val).toFixed(1)} %</td>
+              </tr>
+            </table>
+          `
+        }
+      })
+    }).on('mousemove', function (event, d) {
+      // Move the tooltip itself
+      let width = that.tooltip.node().getBoundingClientRect().width;
+      let height = that.tooltip.node().getBoundingClientRect().height;
+      that.tooltip
+        .style('left', event.clientX - (width / 2) - 5 + 'px')
+        .style('top', event.clientY - (height) - 15 + 'px')
+        .style('opacity', 1);
+    }).on('mouseout', function () {
+      that.tooltip.style('opacity', 0);
+    });
   }
 }
 
