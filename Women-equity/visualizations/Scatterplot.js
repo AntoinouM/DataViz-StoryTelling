@@ -184,6 +184,11 @@ class Scatterplot {
 
     createTooltips(circles, that) {
         circles.on('mouseover', function (event, d) {
+
+            let score = (d.women_population/1000000).toFixed(1) + " M"
+            if (d.women_population/1000000 < 1) score =  (d.women_population/1000).toFixed(1) + " K"
+
+            
             that.tooltipText.html(function () {
                 return `
                 <table>
@@ -200,8 +205,8 @@ class Scatterplot {
                     <td>${(d.gdp/1000000000).toFixed(1)} Md</td>
                   </tr>
                   <tr>
-                    <td><b>GDP</b></td>
-                    <td>${(d.gdp/1000000000).toFixed(1)} Md</td>
+                    <td><b>Women population</b></td>
+                    <td>${score}</td>
                   </tr>
                 </table>
               `
