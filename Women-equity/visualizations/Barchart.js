@@ -122,25 +122,31 @@ class Barchart {
       .join("rect")
       .attr("class", "bar")
       .attr("x", (d) => that.xScale(that.xAccessor(d)))
-      .attr("y", (d) => that.yScale(that.yAccessor(d)))
+      .attr("y", (d) => that.yScale(0))
+      .attr("height", 0)
       .attr('width', that.xScale.bandwidth());
+      if (that.configBarchart.colorScale) {
+        bars.attr('fill', d => that.colorScale(that.colorAccessor(d)))
+      } else {
+        bars.attr('fill', that.configBarchart.colors.orange)
+      }
 
     bars.transition()
       .duration(700)
       .delay(150)
       .delay((d, i) => (i * 75))
       .attr('height', d => that.configBarchart.boundedHeight - that.yScale(that.yAccessor(d)))
-    if (that.configBarchart.colorScale) {
-      bars.attr('fill', d => that.colorScale(that.colorAccessor(d)))
-    } else {
-      bars.attr('fill', that.configBarchart.colors.orange)
-    }
+      .attr("y", (d) => that.yScale(that.yAccessor(d)))
+
 
     // Create Axis
     that.xAxisG
       .transition()
       .duration(600)
       .call(that.xAxis)
+      .selectAll("text")
+      .attr("transform", "translate(8,0)rotate(-45)")
+      .style("text-anchor", "end")
       .call((g) => g.select(".domain").remove()); // get rid of the axis line and just use the markers and grid lines
 
     that.yAxisG

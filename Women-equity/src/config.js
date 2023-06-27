@@ -15,10 +15,10 @@ const colors = {
 const configMap = {
     parentElement: '#vizMap',
     linkedElement: '#bar-chart',
-    width: window.innerWidth * 0.65,
-    height: window.innerHeight * 0.65,
+    width: window.innerWidth * 0.55,
+    height: window.innerHeight * 0.45,
     margin: {
-        top: 20,
+        top: 0,
         right: 20,
         bottom: 35,
         left: 35
@@ -87,13 +87,13 @@ const configBackgroundMap2 = {
 const configBarchart = {
     region: {
         parentElement: '#vizBacktoBack',
-        width: window.innerWidth * 0.75,
-        height: window.innerHeight * 0.5,
+        width: window.innerWidth * 0.6,
+        height: window.innerHeight * 0.35,
         margin: {
             top: 20,
-            right: 35,
-            bottom: 35,
-            left: 20
+            right: 0,
+            bottom: 55,
+            left: 35
         },
         colors: colors,
         colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
@@ -103,13 +103,13 @@ const configBarchart = {
 
     country: {
         parentElement: '#vizBarchart',
-        width: window.innerWidth * 0.5,
-        height: window.innerHeight * 0.4,
+        width: window.innerWidth * 0.4,
+        height: window.innerHeight * 0.3,
         margin: {
             top: 20,
             right: 35,
-            bottom: 35,
-            left: 20
+            bottom: 75,
+            left: 25
         },
         colors: colors,
         colorScale: null,
@@ -119,28 +119,28 @@ const configBarchart = {
     }
 
 }
-
-const configBackToBack = {
-    parentElement: '#vizBacktoBack',
-    width: window.innerWidth * 0.75,
-    height: window.innerHeight * 0.5,
-    margin: {
-        top: 20,
-        right: 35,
-        bottom: 35,
-        left: 20
-    },
-    colors: colors,
-    colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
-    boundedWidth: undefined,
-    boundedHeight: undefined,
-    leftPart: {
-
-    },
-    rightPart: {
-
-    },
+const configScatterPlot = {
+        parentElement: '#vizBubbleChart',
+        colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
+        width: window.innerWidth * 0.6,
+        height: window.innerHeight * 0.3,
+        margin: {
+            top: 40,
+            right: 0,
+            bottom: 35,
+            left: 35
+        },
+        colors: colors,
+        tooltipPadding: 15,
+        xAxisText: 'GDP',
+        yAxisText: 'WBL Index',
+        bandArray: [],
+        dataAccessors: {
+            param2check: 'scoring',
+            color:  'region',
+            x: 'gdp',
+            y: 'scoring.wbl_index'
+        }
 }
 
-
-export { configMap, configYesNoMap, configBackgroundMap, configBackgroundMap2, configBarchart, colors }
+export { configMap, configYesNoMap, configBackgroundMap, configBackgroundMap2, configBarchart, colors, configScatterPlot }

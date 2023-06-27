@@ -75,7 +75,7 @@ class Map {
         that.projection = d3
             .geoMercator()
             .translate([that.configMap.width / 2.2, that.configMap.height / 1.4])
-            .scale([150]);
+            .scale([120]);
         that.path = d3.geoPath().projection(that.projection);
         // scales
         that.colorScale = d3
@@ -94,6 +94,10 @@ class Map {
             .append('g')
             .attr('class', 'mapViz')
             .attr('transform', `translate(${that.configMap.margin.left}, 0)`);
+
+        // Reference to the tooltip
+        that.tooltip = d3.select('#tooltipMap');
+        that.tooltipText = d3.select('#informationMap');
     }
 
     updateMap() {
@@ -166,9 +170,39 @@ class Map {
         if (that.configMap.clickable) {
             this.drawBarchartOnClick(countries)
         }
-
+        this.createTooltips(countries, that)
     }
 
+    createTooltips(countries, that) {
+        countries.on('mouseover', function (event, d) {
+            that.tooltipText.html(function () {
+                if (d.scoring != undefined) {
+                    return `
+                    <table>
+                      <tr>
+                        <td><b>Country:</b></td>
+                        <td>${d.scoring.economy}</td>
+                      </tr>
+                      <tr>
+                        <td><b>WBL Score</b></td>
+                        <td>${d.scoring.wbl_index.toFixed(1)} %</td>
+                      </tr>
+                    </table>
+                  `
+                }
+            })
+        }).on('mousemove', function (event, d) {
+            // Move the tooltip itself
+            let width = that.tooltip.node().getBoundingClientRect().width;
+            let height = that.tooltip.node().getBoundingClientRect().height;
+            that.tooltip
+                .style('left', event.clientX - (width / 2) - 5 + 'px')
+                .style('top', event.clientY - (height) - 15 + 'px')
+                .style('opacity', 1);
+        }).on('mouseout', function () {
+            that.tooltip.style('opacity', 0);
+        });
+    }
 
     drawBarchartOnClick(countries) {
         const that = this;
@@ -179,18 +213,13 @@ class Map {
             that.updateCountryObject(d, that)
 
             // update barCharttitle
-            d3.select('#titleBarchart').text(GLOBAL.currentCountry.name)
+            d3.select('#titleBarchartYear').text(GLOBAL.currentCountry.name)
             // show slider and update value
             d3.select('#timeWheel').style('opacity', 1)
             GLOBAL.updateSliderElement(d3)
 
             // draw barchart
             GLOBAL.currentCountry.drawBarchart(document.querySelector('#vizBarchart'));
-
-            // check for indicator
-            if (GLOBAL.currentIndicator.name) {
-                //update questions
-            }
 
             // scroll to barchart
             const barchartSection = document.querySelector(that.configMap.linkedElement)
@@ -230,6 +259,7 @@ class Map {
         that.slider.input.on('input', function () {
             that.currentYear = +this.value
             GLOBAL.currentYear = +this.value
+            document.querySelector('#currentYear').innerHTML = GLOBAL.currentYear;
             that.slider.span.html(+this.value)
 
             that.data = transformData(that.dataSets, that.currentYear);

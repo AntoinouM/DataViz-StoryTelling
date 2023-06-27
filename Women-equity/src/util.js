@@ -89,6 +89,8 @@ export const generateYearMap = (wblData) => {
         remainTime.set(filteredDataMaxYear[i].key, Math.ceil(+diffTo100 / +averageProgressByYear))
     }
 
+    
+
     let yearMap = {
         years: {
             array: years.map(Number),
@@ -103,6 +105,54 @@ export const generateYearMap = (wblData) => {
     }
 
     return yearMap;
+}
+
+export const solidifiedData = (dataSets, year) => {
+    const mappedWBL = dataSets.wbl.map((rows) => {
+        return { 
+            economy: rows['Economy'],
+            iso_code: rows['ISO_Code'],
+            region: rows['Region'],
+            report_year: rows['Report_Year'],
+            wbl_index: +rows['WBL_INDEX'].replace(",", "."),
+        }
+    })
+    const filteredData = mappedWBL.filter((e) => +e.report_year === year);
+    const filteredDemographics = dataSets.demo.map(d => {
+        return {
+            country_code: d['Country_Code'],
+            women_population: d[`${year}`]
+        }
+    })
+    const filteredGDP = dataSets.gdp.map(d => {
+            return {
+                country_code: d['Country Code'],
+                gdp: d[`${year}`]
+            }
+        })
+
+    let mergedData = _(filteredData) // start sequence (start with this array)
+        .keyBy('iso_code') // Create a dictionary (TKey, TValue) of the first array
+        .merge(_.keyBy(filteredDemographics, 'country_code'))
+        .merge(_.keyBy(filteredGDP, 'country_code'))
+        .values() // convert the combined dictionaries to an array again
+        .value()
+
+    mergedData = mergedData
+        .filter((d) => d.gdp != "")
+        .filter((d) => d.women_population != undefined)
+        .filter((d) => d.wbl_index)
+        .map(rows => {
+            return {
+                economy: rows['economy'],
+                gdp: +rows['gdp'],
+                region: rows['region'],
+                wbl_index: +rows['wbl_index'],
+                women_population: +rows['women_population'],
+                year: +rows['report_year'],
+            }
+    })
+    return mergedData;
 }
 
 export const transformData = (dataSets, year, country) => { 

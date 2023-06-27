@@ -53,7 +53,22 @@
   </div>
 </section>
   <section id="map-section">
-    <h1 id="titleIntro" class="titleSection">Hello World</h1>
+    <div id="tooltipMap" class="tooltipMap">
+      <span id="informationMap"></span>
+    </div>
+    <h1 id="titleIntro" class="titleSection">🌎 World Map - WBL score in <span id="currentYear">2000</span></h1>
+    <p class="infoViz">This visualization shows the <strong>Women in Business and Law (WBL)</strong> data set which contains a list of data from
+      every country around the world – the name, it’s ISO 3 name
+      and the score over the specified year. This dataset goes from as far back as 1971 (for some
+      countries) to 2023 (for most countries). The default shown year is <strong>2000</strong>. Use the slider below to
+      change the visualization.
+      Zoom in to see more details and click + hold to move around the map.</p>
+    <div id="legendMap">
+      <div id="legendTitle">Equity between gender</div>
+      <div id="topText">100 %</div>
+      <div id="colorLegend"></div>
+      <div id="btmText">0 %</div>
+    </div>
     <div id="vizMap"></div>
     <div class='range'>
       <div id="playBtn">▶</div>
@@ -66,7 +81,8 @@
       <i id="upChevron" class="fa fa-chevron-up fa-3x" aria-hidden="true"></i>
       <div id="upText">Show map</div>
     </div>
-    <h1 id="titleBarchart" class="titleSection">Hello World</h1>
+    <h1 id="titleBarchart" class="titleSection">📊 Detailed Indicator of Equity for <span id="titleBarchartYear"></span></h1>
+    <p class="infoBarchart">The Women, Business and the Law (WBL) score based on indicators that cover a range of areas impacting women's economic empowerment, such as accessing institutions, using property, getting a job, providing incentives to work, going to court, protecting women from violence, and managing assets after divorce. you can click on a bar to display the questions associated to the selected indicator. </p>
     <div id="vizBarchart"></div>
     <div id="questions"></div>
     <div id="timeWheel">
@@ -80,6 +96,10 @@
     </div>
   </section>  
   <section id="backtoback">
+
+    <div id="tooltipB2B" class="tooltipB2B">
+      <span id="informationB2B"></span>
+    </div>
     <div id="return-map2" class="scrollContainer">
       <i id="upChevron" class="fa fa-chevron-up fa-3x" aria-hidden="true"></i>
       <div id="upText">Return to map</div>
@@ -88,8 +108,12 @@
       <i id="upChevron" class="fa fa-chevron-up fa-3x" aria-hidden="true"></i>
       <div id="upText">Scroll Up</div>
     </div>
-    <h1 id="titleBacktoBack" class="titleSection">Hello World</h1>
-    <div id="vizBacktoBack"></div>
+    <div id="vizBubbleChart">   
+       <h2>WBL score by GDP in 2021</h2>
+      </div>
+    <div id="vizBacktoBack">
+      <h2>Current WBL Index by Region and time needed to reach</h2>
+    </div>
   </section>
    
 
