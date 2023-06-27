@@ -7,6 +7,7 @@ class YesNoMap extends Map {
     constructor(configMap, configData, dataSets, year) {
         super(configMap, configData, dataSets, year);
     }
+    
 
     drawMap(data, sel) {
         const that = this;
@@ -37,32 +38,37 @@ class YesNoMap extends Map {
             });
         }
         // Reference to the tooltip
-        const tooltip = d3.select('#tooltip');
-        const tooltipText = d3.select('#information');
-
-        countries.on('mousemove', function (event, d) {
-            // Move the tooltip itself
-            tooltip.style('opacity', 1)
-                .style('left', event.pageX - 86 + 'px')
-                .style('top', event.pageY - 60 + 'px');
-
-            tooltipText.html(function () {
-                return `
-            <table>
-              <tr>
-                <td><b>Country:</b></td>
-                <td>${d.Economy}</td>
-              </tr>
-            </table>
-          `
-            });
-        }).on('mouseout', function () {
-            tooltip.style('opacity', 0);
-        });
-
-
-
+        that.tooltip = d3.select('#tooltipYesNoMap');
+        that.tooltipText = d3.select('#informationYesNoMap');
+        this.createTooltips(countries, that)
         this.drawLegend();
+    }
+
+    createTooltips(countries, that) {
+        countries.on('mouseover', function (event, d) {
+            that.tooltipText.html(function () {
+                if (d.scoring != undefined) {
+                    return `
+                    <table>
+                      <tr>
+                        <td><b>Country:</b></td>
+                        <td>${d.scoring.economy}</td>
+                      </tr>
+                    </table>
+                  `
+                }
+            })
+        }).on('mousemove', function (event, d) {
+            // Move the tooltip itself
+            let width = that.tooltip.node().getBoundingClientRect().width;
+            let height = that.tooltip.node().getBoundingClientRect().height;
+            that.tooltip
+                .style('left', event.clientX - (width / 2) - 5 + 'px')
+                .style('top', event.clientY - (height) - 15 + 'px')
+                .style('opacity', 1);
+        }).on('mouseout', function () {
+            that.tooltip.style('opacity', 0);
+        });
     }
 
     drawLegend() {
