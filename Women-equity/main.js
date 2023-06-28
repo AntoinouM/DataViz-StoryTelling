@@ -29,7 +29,7 @@ import {
 } from 'lodash';
 
 // WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#map-section').scrollIntoView({
+document.querySelector('#intro').scrollIntoView({
     behavior: 'smooth',
     block: 'start',
     inline: 'start'
@@ -85,7 +85,9 @@ async function drawViz() {
     let scrollingBarChart;
     scrollingBarChart = AddScrollScore('#bar-chart', scrollingBarChart, null)
 
+    drawYesNoMap(GLOBAL.dataSets, 2021);
     drawMap(GLOBAL.dataSets);
+
     // align info and map
     document.querySelector(".infoViz").style.width = document.querySelector("#vizMap").firstChild.width.baseVal.value + 'px'
     document.querySelector(".infoBarchart").style.width = document.querySelector("#titleBarchart").getBoundingClientRect().width + 150 + 'px' 
@@ -306,12 +308,34 @@ function drawMap(dataSets) {
 
     // Draw the map
     map.updateMap();
+}
+
+function drawYesNoMap(dataSets, year) {
+    const configData = {
+        minYear: +GLOBAL.yearMap.years.min,
+        maxYear: +GLOBAL.yearMap.years.max,
+        currentYear: GLOBAL.currentYear,
+        minIndex: Math.floor(d3.min(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))),
+        maxIndex: Math.ceil(d3.max(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))),
+        dataAccessors: {
+            paramToCheck: 'scoring',
+            color: 'wbl_index'
+        },
+        sliderGetter: {
+            'input': '#yearSlider',
+            'span': '#rangeValue',
+            'btn': '#playBtn',
+        },
+        domain: undefined
+    }
+
+    configData.domain = [configData.minIndex, configData.maxIndex]
 
     // Create an instance of YesNoMap
-const yesNoMap = new YesNoMap(configYesNoMap, configData, dataSets, 2021);
+    const yesNoMap = new YesNoMap(configYesNoMap, configData, dataSets, year);
 
-// Call the updateMap function to render the map
-yesNoMap.updateMap();
+    // Call the updateMap function to render the map
+    yesNoMap.updateMap();
 }
 
 

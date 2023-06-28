@@ -176,9 +176,9 @@ h2 {
   text-align: center;
   margin: 3% 0 0 0;
 }
-#yesNoMapLegend{
-  display: flex;
-  justify-content: flex-end;
+
+#backtoback {
+  gap: 30px;
 }
 
 /* Tooltip */
@@ -200,6 +200,32 @@ h2 {
   transition: opacity 1s;
 }
 
+#tooltipB2B:before, #tooltipMap:before, #tooltipYesNoMap:before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: var(--color-bg-sec);
+  border: 1px solid #ddd;
+  border-top-color: transparent;
+  border-left-color: transparent;
+  transform: translate(-50%, 50%) rotate(45deg);
+  transform-origin: center center;
+  z-index: 10;
+}
+
+td {
+  text-align: start;
+  padding: 0 5px;
+  color: var(--color-fg)
+}
+
+/* Barchart style */
+.bar {
+  shape-rendering: crispEdges;
+}
 
 .bar:hover {
   cursor: pointer;
@@ -209,4 +235,9 @@ h2 {
 .bar.active {
   stroke: var(--color-purple);
   stroke-width: 1.8pt;
+}
+
+#yesNoMapLegend{
+  display: flex;
+  justify-content: flex-end;
 }
