@@ -29,17 +29,10 @@ import {
     forEach
 } from 'lodash';
 
-// WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#intro').scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-    inline: 'start'
-});
-
 /**
  * Setting up const & variables
  */
-GLOBAL.currentYear = 2000;
+GLOBAL.currentYear = 2000; //intialize the current year
 let mergedData;
 let map;
 let barchartHorizontal;
@@ -69,7 +62,7 @@ async function drawViz() {
     visualizeTotalNumber(demographicsData, wblData);
     drawBackgroundMap(GLOBAL.dataSets)
 
-    // on click go back
+    // Set up click events for scrolling to different sections
     onCLickUpdateAndScroll('#goMapFirst', '#yesNoMapSection')
     onCLickUpdateAndScroll('#yesNoMapSection', '#butWaitSection')
     onCLickUpdateAndScroll('#goMapSecond', '#map-section')
@@ -77,24 +70,28 @@ async function drawViz() {
     onCLickUpdateAndScroll('#return-map2', '#map-section')
     onCLickUpdateAndScroll('#goNext', '#backtoback')
     onCLickUpdateAndScroll('#goConclusion', '#conclusionSection')
+
     // Manage scrolling event for barchart year
     addScrollingEventYear()
+
     // Bar chart scroll to next
     let scrollingBarChart;
     scrollingBarChart = AddScrollScore('#bar-chart', scrollingBarChart, null)
 
+    // Scroll to the top of the page when clicking on the "scroll to top" containers
     var scrollContainers = document.querySelectorAll('.goUp');
-    scrollContainers.forEach(function(container) {
-      container.addEventListener('click', function() {
-        // Scroll to the top of the page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
+    scrollContainers.forEach(function (container) {
+        container.addEventListener('click', function () {
+            // Scroll to the top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     });
 
+    //Draw map visualizations
     drawYesNoMap(GLOBAL.dataSets, 2021);
     drawMap(GLOBAL.dataSets);
 
-    // align info and map
+    //Align info and map
     document.querySelector(".infoViz").style.width = document.querySelector("#vizMap").firstChild.width.baseVal.value + 'px'
     document.querySelector(".infoBarchart").style.width = document.querySelector("#titleBarchart").getBoundingClientRect().width + 150 + 'px'
     console.log(document.querySelector("#titleBarchart").getBoundingClientRect())
@@ -257,11 +254,13 @@ function drawBackToBack() {
 function drawBackgroundMap(dataSets) {
     const configData = {
         dataAccessors: {
-            paramToCheck: 'empty_map',
-            color: null,
+            paramToCheck: 'empty_map', //check that its an empty map
+            color: null, //no need for a color 
         },
-        sliderGetter: null,
+        sliderGetter: null, // no need for a slider
     }
+
+    //Create the instances of each background map
     map = new Map(configBackgroundMap, configData, dataSets, 2021);
     map.updateMap();
 
@@ -304,11 +303,11 @@ function drawMap(dataSets) {
 
 function drawYesNoMap(dataSets, year) {
     const configData = {
-        minYear: +GLOBAL.yearMap.years.min,
-        maxYear: +GLOBAL.yearMap.years.max,
-        currentYear: GLOBAL.currentYear,
-        minIndex: Math.floor(d3.min(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))),
-        maxIndex: Math.ceil(d3.max(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))),
+        minYear: +GLOBAL.yearMap.years.min, //Find the minimum year
+        maxYear: +GLOBAL.yearMap.years.max, //Find the maximum year
+        currentYear: GLOBAL.currentYear, //Checkout the current year
+        minIndex: Math.floor(d3.min(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))), //Minimum index value from our datasets
+        maxIndex: Math.ceil(d3.max(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))), //Maximum index value from our datasets
         dataAccessors: {
             paramToCheck: 'scoring',
             color: 'wbl_index'
@@ -323,10 +322,10 @@ function drawYesNoMap(dataSets, year) {
 
     configData.domain = [configData.minIndex, configData.maxIndex]
 
-    // Create an instance of YesNoMap
+    // Create the YesNoMap object
     const yesNoMap = new YesNoMap(configYesNoMap, configData, dataSets, year);
 
-    // Call the updateMap function to render the map
+    // Draw the new map
     yesNoMap.updateMap();
 }
 
