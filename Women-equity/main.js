@@ -20,6 +20,7 @@ import {
     configYesNoMap,
     configBackgroundMap,
     configBackgroundMap2,
+    configBackgroundMap3,
     configBarchart,
     configScatterPlot,
     colors
@@ -75,6 +76,7 @@ async function drawViz() {
     onCLickUpdateAndScroll('#return-map', '#map-section')
     onCLickUpdateAndScroll('#return-map2', '#map-section')
     onCLickUpdateAndScroll('#goNext', '#backtoback')
+    onCLickUpdateAndScroll('#goConclusion', '#conclusionSection')
     // Manage scrolling event for barchart year
     addScrollingEventYear()
     // Bar chart scroll to next
@@ -264,6 +266,9 @@ function drawBackgroundMap(dataSets) {
     map.updateMap();
 
     map = new Map(configBackgroundMap2, configData, dataSets, 2021);
+    map.updateMap();
+
+    map = new Map(configBackgroundMap3, configData, dataSets, 2021);
     map.updateMap();
 }
 

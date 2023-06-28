@@ -84,6 +84,23 @@ const configBackgroundMap2 = {
     clickable: false
 }
 
+const configBackgroundMap3 = {
+    parentElement: '#conclusionBgMap',
+    width: window.innerWidth * 0.8,
+    height: window.innerHeight * 0.8,
+    margin: {
+        top: 20,
+        right: 20,
+        bottom: 35,
+        left: 35
+    },
+    colors: colors,
+    colorScale: false,
+    boundedWidth: undefined,
+    boundedHeight: undefined,
+    clickable: false
+}
+
 const configBarchart = {
     region: {
         parentElement: '#vizBacktoBack',
@@ -121,6 +138,7 @@ const configBarchart = {
 }
 const configScatterPlot = {
         parentElement: '#vizBubbleChart',
+        linkedElement: '#conclusionBgMap',
         colorScale: ['#8be9fd', '#ff79c6', '#50fa7b', '#ffb86c', '#f8f8f2', '#f1fa8c', '#ff5555'],
         width: window.innerWidth * 0.6,
         height: window.innerHeight * 0.3,
@@ -143,4 +161,4 @@ const configScatterPlot = {
         }
 }
 
-export { configMap, configYesNoMap, configBackgroundMap, configBackgroundMap2, configBarchart, colors, configScatterPlot }
+export { configMap, configYesNoMap, configBackgroundMap, configBackgroundMap2, configBackgroundMap3, configBarchart, colors, configScatterPlot }
