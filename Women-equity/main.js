@@ -67,9 +67,6 @@ async function drawViz() {
     GLOBAL.yearMap = generateYearMap(wblData)
     visualizeTotalNumber(demographicsData, wblData);
     drawBackgroundMap(GLOBAL.dataSets)
-    // console.log(worldData)
-    // console.log(demographicsData)
-    // console.log(mergedData)
 
     // on click go back
     onCLickUpdateAndScroll('#goMapFirst', '#yesNoMapSection')
@@ -77,7 +74,6 @@ async function drawViz() {
     onCLickUpdateAndScroll('#goMapSecond', '#map-section')
     onCLickUpdateAndScroll('#return-map', '#map-section')
     onCLickUpdateAndScroll('#return-map2', '#map-section')
-    onCLickUpdateAndScroll('.goUp', '#intro')
     onCLickUpdateAndScroll('#goNext', '#backtoback')
     // Manage scrolling event for barchart year
     addScrollingEventYear()
@@ -85,12 +81,20 @@ async function drawViz() {
     let scrollingBarChart;
     scrollingBarChart = AddScrollScore('#bar-chart', scrollingBarChart, null)
 
+    var scrollContainers = document.querySelectorAll('.goUp');
+    scrollContainers.forEach(function(container) {
+      container.addEventListener('click', function() {
+        // Scroll to the top of the page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
     drawYesNoMap(GLOBAL.dataSets, 2021);
     drawMap(GLOBAL.dataSets);
 
     // align info and map
     document.querySelector(".infoViz").style.width = document.querySelector("#vizMap").firstChild.width.baseVal.value + 'px'
-    document.querySelector(".infoBarchart").style.width = document.querySelector("#titleBarchart").getBoundingClientRect().width + 150 + 'px' 
+    document.querySelector(".infoBarchart").style.width = document.querySelector("#titleBarchart").getBoundingClientRect().width + 150 + 'px'
     console.log(document.querySelector("#titleBarchart").getBoundingClientRect())
 
     drawBackToBack();
@@ -101,7 +105,7 @@ async function drawViz() {
             configScatterPlot.bandArray.push(element.key)
         })
         configScatterPlot.bandArray.sort();
-    
+
         const dataNew = solidifiedData(GLOBAL.dataSets, 2021)
         if (selected.length === 0) {
             scatter.setData(dataNew)
@@ -140,20 +144,6 @@ function onCLickUpdateAndScroll(elemNameSrc, elemNameTrgt) {
     })
 }
 
-function scrollTo(objScore, DOMelemTarget) {
-
-    objScore.parent.addEventListener('wheel', function () {
-        if (objScore.score >= 30 || !objScore.lastDirUp) {
-            setTimeout(function () {
-                DOMelemTarget.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                    inline: 'start'
-                });
-            }, 150)
-        }
-    })
-}
 
 function visualizeTotalNumber(demographicsData, wblData) {
     // Filter the questions data for the year 2023 and the specified question
@@ -270,12 +260,9 @@ function drawBackgroundMap(dataSets) {
         },
         sliderGetter: null,
     }
-
-    // Create the map object
     map = new Map(configBackgroundMap, configData, dataSets, 2021);
     map.updateMap();
 
-    // Create the map object
     map = new Map(configBackgroundMap2, configData, dataSets, 2021);
     map.updateMap();
 }

@@ -112,7 +112,7 @@ h2 {
 }
 
 
-#upText {
+.scrollContainer {
   font-size: 1.5em;
 }
 
@@ -240,4 +240,8 @@ td {
 #yesNoMapLegend{
   display: flex;
   justify-content: flex-end;
+}
+
+#yesNoMapContainer{
+  height: 100vh;
 }
