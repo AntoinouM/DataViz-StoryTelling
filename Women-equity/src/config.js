@@ -33,8 +33,8 @@ const configMap = {
 const configYesNoMap = {
     parentElement: '#yesNoMap',
     linkedElement: '#secondBgMap',
-    width: window.innerWidth * 0.65,
-    height: window.innerHeight * 0.65,
+    width: window.innerWidth * 0.8,
+    height: window.innerHeight * 0.5,
     margin: {
         top: 20,
         right: 20,
@@ -42,7 +42,7 @@ const configYesNoMap = {
         left: 35
     },
     colors: colors,
-    colorScale: ['#50fa7b', '#ff5555'],
+    colorScale: ['#50fa7b', '#B597F3'],
     boundedWidth: undefined,
     boundedHeight: undefined,
     clickable: false

@@ -17,7 +17,7 @@ class YesNoMap extends Map {
             .join('path')
             .attr('d', that.path)
             .attr('class', 'country')
-            .style('stroke', that.configMap.colors.fg);
+            .style('stroke', that.configMap.colors.bg);
 
         if (!that.configMap.colorScale) {
             countries
@@ -51,7 +51,6 @@ class YesNoMap extends Map {
                     return `
                     <table>
                       <tr>
-                        <td><b>Country:</b></td>
                         <td>${d.scoring.economy}</td>
                       </tr>
                     </table>
