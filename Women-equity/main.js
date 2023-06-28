@@ -7,6 +7,7 @@ import Map from './visualizations/Map'
 import Barchart from './visualizations/Barchart';
 import BacktoBack from './visualizations/BacktoBack';
 import Scatterplot from './visualizations/Scatterplot';
+import YesNoMap from './visualizations/YesNoMap';
 import {
     transformData,
     AddScrollScore,
@@ -66,8 +67,6 @@ async function drawViz() {
     GLOBAL.yearMap = generateYearMap(wblData)
     visualizeTotalNumber(demographicsData, wblData);
     drawBackgroundMap(GLOBAL.dataSets)
-    drawYesNoMap(GLOBAL.dataSets);
-
     // console.log(worldData)
     // console.log(demographicsData)
     // console.log(mergedData)
@@ -307,25 +306,14 @@ function drawMap(dataSets) {
 
     // Draw the map
     map.updateMap();
+
+    // Create an instance of YesNoMap
+const yesNoMap = new YesNoMap(configYesNoMap, configData, dataSets, 2021);
+
+// Call the updateMap function to render the map
+yesNoMap.updateMap();
 }
 
-function drawYesNoMap(dataSets) {
-    const configData = {
-        minIndex: 'Yes',
-        maxIndex: 'No',
-        dataAccessors: {
-            paramToCheck: 'questions',
-            color: "pay['Can a woman work in an industrial job in the same way as a man?']"
-        },
-        sliderGetter: null,
-        domain: ['Yes', 'No']
-    }
-
-    // Create the map object
-    map = new Map(configYesNoMap, configData, dataSets, 2021);
-    map.updateMap();
-
-}
 
 function addScrollingEventYear() {
     // scrolling event
