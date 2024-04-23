@@ -7,6 +7,7 @@ import Map from './visualizations/Map'
 import Barchart from './visualizations/Barchart';
 import BacktoBack from './visualizations/BacktoBack';
 import Scatterplot from './visualizations/Scatterplot';
+import YesNoMap from './visualizations/YesNoMap';
 import {
     transformData,
     AddScrollScore,
@@ -19,6 +20,7 @@ import {
     configYesNoMap,
     configBackgroundMap,
     configBackgroundMap2,
+    configBackgroundMap3,
     configBarchart,
     configScatterPlot,
     colors
@@ -27,17 +29,10 @@ import {
     forEach
 } from 'lodash';
 
-// WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#map-section').scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-    inline: 'start'
-});
-
 /**
  * Setting up const & variables
  */
-GLOBAL.currentYear = 2000;
+GLOBAL.currentYear = 2000; //intialize the current year
 let mergedData;
 let map;
 let barchartHorizontal;
@@ -48,7 +43,6 @@ let dispatcher;
 async function drawViz() {
 
     /* [1] ===== ACCESS DATA ===== */
-    // Load world data
     const worldData = await d3.json('./data/world.geo.json');
     const demographicsData = await d3.csv('./data/SP.POP.TOTL.FE.csv')
     const wblData = await d3.dsv(";", "./data/WBL-panel.csv")
@@ -66,30 +60,39 @@ async function drawViz() {
     GLOBAL.yearMap = generateYearMap(wblData)
     visualizeTotalNumber(demographicsData, wblData);
     drawBackgroundMap(GLOBAL.dataSets)
-    drawYesNoMap(GLOBAL.dataSets);
 
-    // console.log(worldData)
-    // console.log(demographicsData)
-    // console.log(mergedData)
-
-    // on click go back
+    // Set up click events for scrolling to different sections
     onCLickUpdateAndScroll('#goMapFirst', '#yesNoMapSection')
     onCLickUpdateAndScroll('#yesNoMapSection', '#butWaitSection')
     onCLickUpdateAndScroll('#goMapSecond', '#map-section')
     onCLickUpdateAndScroll('#return-map', '#map-section')
     onCLickUpdateAndScroll('#return-map2', '#map-section')
-    onCLickUpdateAndScroll('.goUp', '#intro')
     onCLickUpdateAndScroll('#goNext', '#backtoback')
+    onCLickUpdateAndScroll('#goConclusion', '#conclusionSection')
+
     // Manage scrolling event for barchart year
     addScrollingEventYear()
+
     // Bar chart scroll to next
     let scrollingBarChart;
     scrollingBarChart = AddScrollScore('#bar-chart', scrollingBarChart, null)
 
+    // Scroll to the top of the page when clicking on the "scroll to top" containers
+    var scrollContainers = document.querySelectorAll('.goUp');
+    scrollContainers.forEach(function (container) {
+        container.addEventListener('click', function () {
+            // Scroll to the top of the page
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
+    //Draw map visualizations
+    drawYesNoMap(GLOBAL.dataSets, 2021);
     drawMap(GLOBAL.dataSets);
-    // align info and map
+
+    //Align info and map
     document.querySelector(".infoViz").style.width = document.querySelector("#vizMap").firstChild.width.baseVal.value + 'px'
-    document.querySelector(".infoBarchart").style.width = document.querySelector("#titleBarchart").getBoundingClientRect().width + 150 + 'px' 
+    document.querySelector(".infoBarchart").style.width = document.querySelector("#titleBarchart").getBoundingClientRect().width + 150 + 'px'
     console.log(document.querySelector("#titleBarchart").getBoundingClientRect())
 
     drawBackToBack();
@@ -100,7 +103,7 @@ async function drawViz() {
             configScatterPlot.bandArray.push(element.key)
         })
         configScatterPlot.bandArray.sort();
-    
+
         const dataNew = solidifiedData(GLOBAL.dataSets, 2021)
         if (selected.length === 0) {
             scatter.setData(dataNew)
@@ -139,20 +142,6 @@ function onCLickUpdateAndScroll(elemNameSrc, elemNameTrgt) {
     })
 }
 
-function scrollTo(objScore, DOMelemTarget) {
-
-    objScore.parent.addEventListener('wheel', function () {
-        if (objScore.score >= 30 || !objScore.lastDirUp) {
-            setTimeout(function () {
-                DOMelemTarget.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                    inline: 'start'
-                });
-            }, 150)
-        }
-    })
-}
 
 function visualizeTotalNumber(demographicsData, wblData) {
     // Filter the questions data for the year 2023 and the specified question
@@ -264,18 +253,20 @@ function drawBackToBack() {
 function drawBackgroundMap(dataSets) {
     const configData = {
         dataAccessors: {
-            paramToCheck: 'empty_map',
-            color: null,
+            paramToCheck: 'empty_map', //check that its an empty map
+            color: null, //no need for a color 
         },
-        sliderGetter: null,
+        sliderGetter: null, // no need for a slider
     }
 
-    // Create the map object
+    //Create the instances of each background map
     map = new Map(configBackgroundMap, configData, dataSets, 2021);
     map.updateMap();
 
-    // Create the map object
     map = new Map(configBackgroundMap2, configData, dataSets, 2021);
+    map.updateMap();
+
+    map = new Map(configBackgroundMap3, configData, dataSets, 2021);
     map.updateMap();
 }
 
@@ -309,23 +300,34 @@ function drawMap(dataSets) {
     map.updateMap();
 }
 
-function drawYesNoMap(dataSets) {
+function drawYesNoMap(dataSets, year) {
     const configData = {
-        minIndex: 'Yes',
-        maxIndex: 'No',
+        minYear: +GLOBAL.yearMap.years.min, //Find the minimum year
+        maxYear: +GLOBAL.yearMap.years.max, //Find the maximum year
+        currentYear: GLOBAL.currentYear, //Checkout the current year
+        minIndex: Math.floor(d3.min(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))), //Minimum index value from our datasets
+        maxIndex: Math.ceil(d3.max(dataSets.wbl, (d) => +d.WBL_INDEX.replace(",", "."))), //Maximum index value from our datasets
         dataAccessors: {
-            paramToCheck: 'questions',
-            color: "pay['Can a woman work in an industrial job in the same way as a man?']"
+            paramToCheck: 'scoring',
+            color: 'wbl_index'
         },
-        sliderGetter: null,
-        domain: ['Yes', 'No']
+        sliderGetter: {
+            'input': '#yearSlider',
+            'span': '#rangeValue',
+            'btn': '#playBtn',
+        },
+        domain: undefined
     }
 
-    // Create the map object
-    map = new Map(configYesNoMap, configData, dataSets, 2021);
-    map.updateMap();
+    configData.domain = [configData.minIndex, configData.maxIndex]
 
+    // Create the YesNoMap object
+    const yesNoMap = new YesNoMap(configYesNoMap, configData, dataSets, year);
+
+    // Draw the new map
+    yesNoMap.updateMap();
 }
+
 
 function addScrollingEventYear() {
     // scrolling event
