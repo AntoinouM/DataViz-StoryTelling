@@ -1,0 +1,4 @@
+[build]
+  base = "Women-equity"
+  publish = "Women-equity/dist"
+  command = "npm run build"

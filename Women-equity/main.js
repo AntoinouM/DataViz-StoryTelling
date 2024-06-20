@@ -28,7 +28,7 @@ import {
 } from 'lodash';
 
 // WHY DO I NEED TO GO TO TOP OF PAGE???
-document.querySelector('#map-section').scrollIntoView({
+document.querySelector('#intro').scrollIntoView({
     behavior: 'smooth',
     block: 'start',
     inline: 'start'
@@ -66,12 +66,10 @@ async function drawViz() {
     GLOBAL.yearMap = generateYearMap(wblData)
     visualizeTotalNumber(demographicsData, wblData);
     drawBackgroundMap(GLOBAL.dataSets)
-    drawYesNoMap(GLOBAL.dataSets);
 
 
     // on click go back
-    onCLickUpdateAndScroll('#goMapFirst', '#yesNoMapSection')
-    onCLickUpdateAndScroll('#yesNoMapSection', '#butWaitSection')
+    onCLickUpdateAndScroll('#goMapFirst', '#butWaitSection')
     onCLickUpdateAndScroll('#goMapSecond', '#map-section')
     onCLickUpdateAndScroll('#return-map', '#map-section')
     onCLickUpdateAndScroll('#return-map2', '#map-section')
@@ -87,7 +85,6 @@ async function drawViz() {
     // align info and map
     document.querySelector(".infoViz").style.width = document.querySelector("#vizMap").firstChild.width.baseVal.value + 'px'
     document.querySelector(".infoBarchart").style.width = document.querySelector("#titleBarchart").getBoundingClientRect().width + 150 + 'px' 
-    console.log(document.querySelector("#titleBarchart").getBoundingClientRect())
 
     drawBackToBack();
     drawScatter(GLOBAL.dataSets, configScatterPlot)
@@ -304,24 +301,6 @@ function drawMap(dataSets) {
 
     // Draw the map
     map.updateMap();
-}
-
-function drawYesNoMap(dataSets) {
-    const configData = {
-        minIndex: 'Yes',
-        maxIndex: 'No',
-        dataAccessors: {
-            paramToCheck: 'questions',
-            color: "pay['Can a woman work in an industrial job in the same way as a man?']"
-        },
-        sliderGetter: null,
-        domain: ['Yes', 'No']
-    }
-
-    // Create the map object
-    map = new Map(configYesNoMap, configData, dataSets, 2021);
-    map.updateMap();
-
 }
 
 function addScrollingEventYear() {

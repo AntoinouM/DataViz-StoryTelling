@@ -14,5 +14,10 @@
   "dependencies": {
     "d3": "^7.8.4",
     "lodash": "^4.17.21"
-  }
+  },
+  "description": "*Women, Business and the Law data is available for the period from 1971 to 2023 (calendar years 1970 to 2022). By developing a time series and further researching the interaction between inequality of opportunity for women and labor market dynamics, Women, Business and the Law strengthens insights into how women’s employment and entrepreneurship are affected by legal gender discrimination, and in turn how this affects economic outcomes.*",
+  "main": "main.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
