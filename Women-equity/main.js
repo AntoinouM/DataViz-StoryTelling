@@ -68,9 +68,6 @@ async function drawViz() {
     drawBackgroundMap(GLOBAL.dataSets)
     drawYesNoMap(GLOBAL.dataSets);
 
-    // console.log(worldData)
-    // console.log(demographicsData)
-    // console.log(mergedData)
 
     // on click go back
     onCLickUpdateAndScroll('#goMapFirst', '#yesNoMapSection')
