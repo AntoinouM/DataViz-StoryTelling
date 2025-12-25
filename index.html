@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/DataViz-StoryTelling/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Bank - Women Business and Law Index</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+  
+  <script type="module" crossorigin src="/DataViz-StoryTelling/assets/index-be852380.js"></script>
+  <link rel="stylesheet" href="/DataViz-StoryTelling/assets/index-089c2d6f.css">
+</head>
+
+<body>
+
+<section id="intro">
+  <div class="mapBackgroundContainer">
+    <h1 id="totalNumber">0</h1>
+    <p id="guidingText">of women around the World cannot work in an industrial job in the same way as men.</p>
+    <div id="firstBgMap" class="backgroundMap"></div>
+  </div>
+  <div id="goMapFirst" class="scrollContainer">
+    <i id="upChevron" class="fa fa-chevron-down fa-3x" aria-hidden="true"></i>
+    <div id="upText">See next</div>
+  </div>
+</section>
+<section id="butWaitSection">
+  <div class="mapBackgroundContainer">
+    <h1 style="text-align: center; margin-right: 200px; margin-left: 200px;">But wait, how is it in general with the well-being of women in the World? </h1>
+    <div id="secondBgMap"  class="backgroundMap"></div>
+  </div>
+  <div id="goMapSecond" class="scrollContainer">
+    <i id="upChevron" class="fa fa-chevron-down fa-3x" aria-hidden="true"></i>
+    <div id="upText">See next</div>
+  </div>
+  <div class="scrollContainer scrollContainerRight goUp">
+    <i id="upChevron" class="fa fa-chevron-up fa-3x" aria-hidden="true"></i>
+    <div id="upText">Go Up</div>
+  </div>
+</section>
+  <section id="map-section">
+    <div id="tooltipMap" class="tooltipMap">
+      <span id="informationMap"></span>
+    </div>
+    <h1 id="titleIntro" class="titleSection">🌎 World Map - WBL score in <span id="currentYear">2000</span></h1>
+    <p class="infoViz">This visualization shows the <strong>Women in Business and Law (WBL)</strong> data set which contains a list of data from
+      every country around the world – the name, it’s ISO 3 name
+      and the score over the specified year. This dataset goes from as far back as 1971 (for some
+      countries) to 2023 (for most countries). The default shown year is <strong>2000</strong>. Use the slider below to
+      change the visualization.
+      Zoom in to see more details and click + hold to move around the map.</p>
+    <div id="legendMap">
+      <div id="legendTitle">Equity between gender</div>
+      <div id="topText">100 %</div>
+      <div id="colorLegend"></div>
+      <div id="btmText">0 %</div>
+    </div>
+    <div id="vizMap"></div>
+    <div class='range'>
+      <div id="playBtn">▶</div>
+      <input id="yearSlider" type="range" min='1971' max='2023' step='1'/>
+      <span id="rangeValue"></span>
+    </div>
+  </section>
+  <section id="bar-chart">
+    <div id="return-map" class="scrollContainer">
+      <i id="upChevron" class="fa fa-chevron-up fa-3x" aria-hidden="true"></i>
+      <div id="upText">Show map</div>
+    </div>
+    <h1 id="titleBarchart" class="titleSection">📊 Detailed Indicator of Equity for <span id="titleBarchartYear"></span></h1>
+    <p class="infoBarchart">The Women, Business and the Law (WBL) score based on indicators that cover a range of areas impacting women's economic empowerment, such as accessing institutions, using property, getting a job, providing incentives to work, going to court, protecting women from violence, and managing assets after divorce. you can click on a bar to display the questions associated to the selected indicator. </p>
+    <div id="vizBarchart"></div>
+    <div id="questions"></div>
+    <div id="timeWheel">
+      <div id="prev">1971</div>
+      <div id="selected">1972</div>
+      <div id="next">1973</div>
+    </div>
+    <div id="goNext" class="scrollContainer scrollContainerRight">
+      <i id="upChevron" class="fa fa-chevron-down fa-3x" aria-hidden="true"></i>
+      <div id="upText">See next</div>
+    </div>
+  </section>  
+  <section id="backtoback">
+
+    <div id="tooltipB2B" class="tooltipB2B">
+      <span id="informationB2B"></span>
+    </div>
+    <div id="return-map2" class="scrollContainer">
+      <i id="upChevron" class="fa fa-chevron-up fa-3x" aria-hidden="true"></i>
+      <div id="upText">Return to map</div>
+    </div>
+    <div class="scrollContainer scrollContainerRight goUp">
+      <i id="upChevron" class="fa fa-chevron-up fa-3x" aria-hidden="true"></i>
+      <div id="upText">Scroll Up</div>
+    </div>
+    <div id="vizBubbleChart">   
+       <h2>WBL score by GDP in 2021</h2>
+      </div>
+    <div id="vizBacktoBack">
+      <h2>Current WBL Index by Region and time needed to reach</h2>
+    </div>
+  </section>
+   
+
+    <!-- <div id="scolldowninfo">
+      <div id="infotext">Scroll down</div>
+      <i id="chevron" class="fa fa-chevron-down fa-3x" aria-hidden="true"></i>
+    </div> -->
+
+    
+</body>
+
+</html>
