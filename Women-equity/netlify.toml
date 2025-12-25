@@ -1,4 +1,0 @@
-[build]
-  base = "Women-equity"
-  publish = "dist"
-  command = "npm run build"
